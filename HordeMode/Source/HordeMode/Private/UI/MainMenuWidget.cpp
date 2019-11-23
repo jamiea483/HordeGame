@@ -5,6 +5,8 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Components/TextBlock.h"
 #include "ServerWidget.h"
+#include "GameplayWidget.h"
+#include "AudioWidget.h"
 #include "Components/EditableTextBox.h"
 #include "Components/PanelWidget.h"
 
@@ -23,8 +25,7 @@ int32 UMainMenuWidget::GetMainMenuIndex(EMenuState State)
 {
 	switch (State)
 	{
-	case EMenuState::StartMenu: return 0;
-		break;
+
 	case EMenuState::MainMenu:return MenuIndex;
 		break;
 	case EMenuState::Options:return OptionIndex;
@@ -73,6 +74,69 @@ void UMainMenuWidget::SetMainMenuIndex(EMenuState State, float Value)
 	}
 }
 
+float UMainMenuWidget::GetMainMenuXIndex(EMenuState State)
+{
+	float value = 0;
+	switch (State)
+	{
+	case EMenuState::Audio:
+		if (GetMainMenuIndex(State) == 0)
+			value = WBP_Audio->GetMVSValue();
+		else if (GetMainMenuIndex(State) == 1)
+			value = WBP_Audio->GetMSSVValue();
+		else if (GetMainMenuIndex(State) == 2)
+			value = WBP_Audio->GetSFXVSValue();
+		return value;
+		break;
+	case EMenuState::Gameplay:
+		if (GetMainMenuIndex(State) == 0)
+			value = WBP_Gameplay->GetVertical();
+		else if (GetMainMenuIndex(State) == 1)
+			value = WBP_Gameplay->GetHorizaontal();
+		return value;
+		break;
+	case EMenuState::MultiplayerSettings:
+		if (GetMainMenuIndex(State) == 1)
+			value = GetMaxNumberPlayersIndex();
+		else if (GetMainMenuIndex(State) == 2)
+			value = GetPrivateSlotsIndex();
+		return value;
+		break;
+	default: return 0;
+		break;
+	}
+}
+
+void UMainMenuWidget::SetMainMenuXIndex(EMenuState State, float value)
+{
+	switch (State)
+	{
+	case EMenuState::Audio:
+		if (GetMainMenuIndex(State) == 0)
+			WBP_Audio->SetMVSValue(value*5);
+		else if (GetMainMenuIndex(State) == 1)
+			WBP_Audio->SetMSSVValue(value*5);
+		else if (GetMainMenuIndex(State) == 2)
+			WBP_Audio->SetSFXVSValue(value*5);
+		break;
+	case EMenuState::Gameplay:
+		if (GetMainMenuIndex(State) == 0)
+			WBP_Gameplay->SetVertical(value*0.2);
+		else if (GetMainMenuIndex(State) == 1)
+			WBP_Gameplay->SetHorizaontal(value*0.2);
+		break;
+	case EMenuState::MultiplayerSettings:
+		if (GetMainMenuIndex(State) == 1)
+			SetMaxNumberPlayersIndex(value);
+		else if (GetMainMenuIndex(State) == 2)
+			SetPrivateSlotsIndex(value);
+		break;
+	default:
+		break;
+	}
+
+}
+
 
 void UMainMenuWidget::SetMaxNumberPlayersIndex(int32 value)
 {
@@ -117,6 +181,22 @@ int32 UMainMenuWidget::GetIndexCap(EMenuState State)
 	case EMenuState::Lobbys:return ServerList->GetAllChildren().Num()-1;
 		break;
 	default:return 0;
+		break;
+	}
+}
+
+int32 UMainMenuWidget::GetIndexCapXAxis(EMenuState State)
+{
+	switch (State)
+	{
+
+	case EMenuState::Audio: return 100;
+		break;
+	case EMenuState::Gameplay: return 1;
+		break;
+	case EMenuState::MultiplayerSettings: return 4;
+		break;
+	default: return 0;
 		break;
 	}
 }

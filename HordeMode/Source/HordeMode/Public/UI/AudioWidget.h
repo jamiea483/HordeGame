@@ -35,10 +35,19 @@ public:
 		void SetMVSValue(float value);
 
 	UFUNCTION(BlueprintCallable, Category = "Audio")
+		int32 GetMVSValue();
+
+	UFUNCTION(BlueprintCallable, Category = "Audio")
 		void SetMSSVValue(float value);
 
 	UFUNCTION(BlueprintCallable, Category = "Audio")
+		int32 GetMSSVValue();
+
+	UFUNCTION(BlueprintCallable, Category = "Audio")
 		void SetSFXVSValue(float value);
+
+	UFUNCTION(BlueprintCallable, Category = "Audio")
+		int32 GetSFXVSValue();
 
 	void SaveAudioSettings();
 

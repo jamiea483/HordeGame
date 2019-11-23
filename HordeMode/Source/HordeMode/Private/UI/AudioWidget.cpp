@@ -21,6 +21,7 @@ void UAudioWidget::SetAudioForWidget()
 		}
 }
 
+
 void UAudioWidget::SaveAudioSettings()
 {
 	UHordeGameUserSettings* userSettings = Cast<UHordeGameUserSettings>(UHordeGameUserSettings::GetGameUserSettings());
@@ -40,6 +41,11 @@ void UAudioWidget::SetMVSValue(float value)
 	MVS->SetValue(MasterVolume/100);
 }
 
+int32 UAudioWidget::GetMVSValue()
+{
+	return MasterVolume;
+}
+
 void UAudioWidget::SetMSSVValue(float value)
 {
 	MusicVolume += value;
@@ -51,6 +57,11 @@ void UAudioWidget::SetMSSVValue(float value)
 	MSSV->SetValue(MusicVolume / 100);
 }
 
+int32 UAudioWidget::GetMSSVValue()
+{
+	return MusicVolume;
+}
+
 void UAudioWidget::SetSFXVSValue(float value)
 {
 	SoundEffect += value;
@@ -60,4 +71,9 @@ void UAudioWidget::SetSFXVSValue(float value)
 		SoundEffect = 0;
 
 	SFXVS->SetValue(SoundEffect / 100);
+}
+
+int32 UAudioWidget::GetSFXVSValue()
+{
+	return SoundEffect;
 }

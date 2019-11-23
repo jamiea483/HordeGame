@@ -68,6 +68,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Menu")
 		void SetMainMenuIndex(EMenuState State, float value);
 
+	UFUNCTION(BlueprintCallable, Category = "Menu")
+		float GetMainMenuXIndex(EMenuState State);
+
+	UFUNCTION(BlueprintCallable, Category = "Menu")
+		void SetMainMenuXIndex(EMenuState State, float value);
+
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		UWidgetSwitcher* MenuWidget;
 
@@ -124,6 +130,12 @@ public:
 	*/
 	UFUNCTION()
 		int32 GetIndexCap(EMenuState State);
+
+	/**Gets the Index cap
+	@MenuXAxis
+	*/
+	UFUNCTION()
+		int32 GetIndexCapXAxis(EMenuState State);
 
 	/*Set the lobby list*/
 	void SetServerList(TArray<FServerStruct> Servers);

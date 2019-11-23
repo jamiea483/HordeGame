@@ -16,6 +16,11 @@ void UGameplayWidget::SetHorizaontal(float value)
 	HSS->SetValue(HorizontalValue);
 }
 
+float UGameplayWidget::GetHorizaontal()
+{
+	return HorizontalValue;
+}
+
 void UGameplayWidget::SetVertical(float value)
 {
 	VerticalValue += value;
@@ -25,6 +30,11 @@ void UGameplayWidget::SetVertical(float value)
 		VerticalValue = 0;
 
 		VSS->SetValue(VerticalValue);
+}
+
+float UGameplayWidget::GetVertical()
+{
+	return VerticalValue;
 }
 
 void UGameplayWidget::SetGameplayWidget()

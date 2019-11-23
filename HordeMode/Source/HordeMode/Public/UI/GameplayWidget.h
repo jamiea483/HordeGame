@@ -28,7 +28,13 @@ public:
 		void SetHorizaontal(float value);
 
 	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+		float GetHorizaontal();
+
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
 		void SetVertical(float value);
+
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+		float GetVertical();
 
 	UFUNCTION(BlueprintCallable, Category = "Gameplay")
 		void SetGameplayWidget();

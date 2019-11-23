@@ -5,9 +5,9 @@
 #include "HordeGameInstance.h"
 #include "MainMenuWidget.h"
 #include "Components/EditableTextBox.h"
-#include "AudioWidget.h"
-#include "GameplayWidget.h"
 #include "HordeGameUserSettings.h"
+#include "GameplayWidget.h"
+#include "AudioWidget.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -83,138 +83,21 @@ void AMenuController::MenuXAxis(float value)
 		{
 			if (MenuWidget)
 			{
-				switch (MenuWidget->GetMenuState())
+				if (value > 0.5 && !bDoOnceX)
 				{
-				case EMenuState::MultiplayerSettings:		
-					if (MenuWidget->GetMainMenuIndex(EMenuState::MultiplayerSettings) == 1)
+					bDoOnceX = true;
+					if (MenuWidget->GetMainMenuXIndex(MenuWidget->GetMenuState()) < MenuWidget->GetIndexCapXAxis(MenuWidget->GetMenuState()))
 					{
-						if (value > 0.5 && !bDoOnceX)
-						{
-							bDoOnceX = true;
-							if (MenuWidget->GetMaxNumberPlayersIndex() > 2)
-							{
-								MenuWidget->SetMaxNumberPlayersIndex(-1);
-								UE_LOG(LogTemp, Warning, TEXT("Max Players Index is %i."), MenuWidget->GetMaxNumberPlayersIndex());
-							}
-						}
-						else if (value < -0.5 && !bDoOnceX)
-						{
-							bDoOnceX = true;
-							if (MenuWidget->GetMaxNumberPlayersIndex() < 4)
-							{
-								MenuWidget->SetMaxNumberPlayersIndex(1);
-								UE_LOG(LogTemp, Warning, TEXT("Max Players is %i."), MenuWidget->GetMaxNumberPlayersIndex());
-							}
-						}
+						MenuWidget->SetMainMenuXIndex(MenuWidget->GetMenuState(), 1);
 					}
-					else if (MenuWidget->GetMainMenuIndex(EMenuState::MultiplayerSettings) == 2)
+				}
+				else if (value < -0.5 && !bDoOnceX)
+				{
+					bDoOnceX = true;
+					if (MenuWidget->GetMainMenuXIndex(MenuWidget->GetMenuState()) > 0)
 					{
-						if (value > 0.5 && !bDoOnceX)
-						{
-							bDoOnceX = true;
-							if (MenuWidget->GetPrivateSlotsIndex() > 0)
-							{
-								MenuWidget->SetPrivateSlotsIndex(-1);
-								UE_LOG(LogTemp, Warning, TEXT("Private slots is %i."), MenuWidget->GetPrivateSlotsIndex());
-							}
-						}
-						else if (value < -0.5 && !bDoOnceX)
-						{
-							bDoOnceX = true;
-							if (MenuWidget->GetPrivateSlotsIndex() < 3)
-							{
-								MenuWidget->SetPrivateSlotsIndex(1);
-								UE_LOG(LogTemp, Warning, TEXT("Private slots is %i."), MenuWidget->GetPrivateSlotsIndex());
-							}
-						}
+						MenuWidget->SetMainMenuXIndex(MenuWidget->GetMenuState(), -1);
 					}
-						break;
-				case EMenuState::Gameplay :
-					if (MenuWidget->GetMainMenuIndex(EMenuState::Gameplay) == 0)
-					{
-						if (value > 0.5 && !bDoOnceX)
-						{
-							bDoOnceX = true;
-							MenuWidget->WBP_Gameplay->SetVertical(0.2);
-
-
-						}
-						else if (value < -0.5 && !bDoOnceX)
-						{
-							bDoOnceX = true;
-							MenuWidget->WBP_Gameplay->SetVertical(-0.2);
-
-						}
-					}
-					else if (MenuWidget->GetMainMenuIndex(EMenuState::Gameplay) == 1)
-					{
-						if (value > 0.5 && !bDoOnceX)
-						{
-							bDoOnceX = true;
-							MenuWidget->WBP_Gameplay->SetHorizaontal(0.2);
-
-
-						}
-						else if (value < -0.5 && !bDoOnceX)
-						{
-							bDoOnceX = true;
-							MenuWidget->WBP_Gameplay->SetHorizaontal(-0.2);
-
-						}
-					}
-						break;
-				case EMenuState::Audio:
-					if (MenuWidget->GetMainMenuIndex(EMenuState::Audio) == 0)
-					{
-						if (value > 0.5 && !bDoOnceX)
-						{
-							bDoOnceX = true;
-							MenuWidget->WBP_Audio->SetMVSValue(5);
-
-
-						}
-						else if (value < -0.5 && !bDoOnceX)
-						{
-							bDoOnceX = true;
-							MenuWidget->WBP_Audio->SetMVSValue(-5);
-
-						}
-					}
-					else if (MenuWidget->GetMainMenuIndex(EMenuState::Audio) == 1)
-					{
-						if (value > 0.5 && !bDoOnceX)
-						{
-							bDoOnceX = true;
-							MenuWidget->WBP_Audio->SetMSSVValue(5);
-
-
-						}
-						else if (value < -0.5 && !bDoOnceX)
-						{
-							bDoOnceX = true;
-							MenuWidget->WBP_Audio->SetMSSVValue(-5);
-
-						}
-					}
-					else if (MenuWidget->GetMainMenuIndex(EMenuState::Audio) == 2)
-					{
-						if (value > 0.5 && !bDoOnceX)
-						{
-							bDoOnceX = true;
-							MenuWidget->WBP_Audio->SetSFXVSValue(5);
-
-
-						}
-						else if (value < -0.5 && !bDoOnceX)
-						{
-							bDoOnceX = true;
-							MenuWidget->WBP_Audio->SetSFXVSValue(-5);
-
-						}
-					}
-					break;
-				default:
-					break;
 				}
 				if (value <= 0.5 && value >= -0.5)
 				{
