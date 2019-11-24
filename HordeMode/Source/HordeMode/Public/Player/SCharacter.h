@@ -140,4 +140,9 @@ public:
 	/*Sets the pause state of the character when player pressed start*/
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		bool GetPauseState() { return bIsPaused; };
+
+	/**True only if the player is moving else it is false
+	@MoveRight
+	*/
+	bool bIsMoving;
 };

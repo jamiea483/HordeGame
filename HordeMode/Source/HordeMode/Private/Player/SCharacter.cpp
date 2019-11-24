@@ -132,7 +132,9 @@ void ASCharacter::Tick(float DeltaTime)
 	float NewFOV = FMath::FInterpTo(Camera->FieldOfView, TargetFOV, DeltaTime, ZoomInterpSpeed);
 	Camera->SetFieldOfView(NewFOV);
 	
+	if(bIsMoving)
 	bIsAimAssistOn = AimAssist(DeltaTime);
+
 		if (Role == ROLE_Authority)
 		{
 			FRotator NewRot = (GetControlRotation() - GetActorRotation());
@@ -200,6 +202,7 @@ void ASCharacter::MoveForward(float value)
 void ASCharacter::MoveRight(float value)
 {
 	if (bIsPaused)return;	
+	bIsMoving = value == 0 ? false : true;
 		AddMovementInput(GetActorRightVector() * value);
 }
 
