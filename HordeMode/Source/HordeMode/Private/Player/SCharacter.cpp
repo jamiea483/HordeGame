@@ -59,7 +59,7 @@ void ASCharacter::BeginPlay()
 	
 	DefaultFOV = Camera->FieldOfView;
 
-	if (Role == ROLE_Authority)
+	if (GetLocalRole() == ROLE_Authority)
 	{
 		FActorSpawnParameters WeaponSpawnParams;
 		WeaponSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -135,7 +135,7 @@ void ASCharacter::Tick(float DeltaTime)
 	if(bIsMoving)
 	bIsAimAssistOn = AimAssist(DeltaTime);
 
-		if (Role == ROLE_Authority)
+		if (GetLocalRole() == ROLE_Authority)
 		{
 			FRotator NewRot = (GetControlRotation() - GetActorRotation());
 			NewRot.Normalize();
@@ -262,7 +262,7 @@ void ASCharacter::EndAim()
 void ASCharacter::StartFire()
 {
 	if (bIsPaused)return;
-	if (CurrentWeapon)
+	if (CurrentWeapon && !bWeaponReload)
 	{
 		CurrentWeapon->StartFire();
 	}
@@ -282,7 +282,10 @@ void ASCharacter::ReloadWeapon()
 	if ( bIsPaused)return;
 	if (CurrentWeapon)
 	{
-		CurrentWeapon->Reload();
+		if (CurrentWeapon->Reload())
+		{
+			bWeaponReload = true;
+		}
 	}
 }
 

@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 #include "Sound/SoundCue.h"
+#include "HordeGameUserSettings.h"
 
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
@@ -59,7 +60,7 @@ void ABasicAI::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if (Role == ROLE_Authority)
+	if (GetLocalRole() == ROLE_Authority)
 	{
 		FVector Nextpoint = GetNextPathPoint();
 	}
@@ -139,13 +140,16 @@ void ABasicAI::SelfDestruct()
 	bExploded = true;
 
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionEffect, GetActorLocation());
-
-	UGameplayStatics::SpawnSoundAttached(ExplosionSound, RootComponent);
+	UHordeGameUserSettings* userSettings = Cast<UHordeGameUserSettings>(UHordeGameUserSettings::GetGameUserSettings());
+	if (userSettings)
+	{
+		UGameplayStatics::SpawnSoundAttached(ExplosionSound, RootComponent, "", GetActorLocation(), EAttachLocation::SnapToTarget, false, (userSettings->GetSoundEffectVolume() / 100), 1.f, 0.0f, nullptr, nullptr, true);
+	}
 
 	MeshComp->SetVisibility(false, true);
 	MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	if (Role == ROLE_Authority)
+	if (GetLocalRole() == ROLE_Authority)
 	{
 		TArray<AActor*> IgnoreActors;
 		IgnoreActors.Add(this);
@@ -167,7 +171,7 @@ void ABasicAI::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (Role == ROLE_Authority && !bExploded)
+	if (GetLocalRole() == ROLE_Authority && !bExploded)
 	{
 		float DistanceToTarget = (GetActorLocation() - NextPathPoint).Size();
 
@@ -226,13 +230,17 @@ void ABasicAI::NotifyActorBeginOverlap(AActor* OtherActor)
 		if (MyChar && !USHealthComponent::isFriendly(OtherActor, this))
 		{
 			
-			if (Role == ROLE_Authority)
+			if (GetLocalRole() == ROLE_Authority)
 			{
 				GetWorldTimerManager().SetTimer(TimeHandle_SelfDamage, this, &ABasicAI::DamageSelf, SelfDamageInterval, true, 0.0f);
 			}
 			bStartedSelfDestruction = true;
 
-			UGameplayStatics::SpawnSoundAttached(SelfDestructSound, RootComponent);
+			UHordeGameUserSettings* userSettings = Cast<UHordeGameUserSettings>(UHordeGameUserSettings::GetGameUserSettings());
+			if (userSettings)
+			{
+				UGameplayStatics::SpawnSoundAttached(SelfDestructSound, RootComponent, "", GetActorLocation(), EAttachLocation::SnapToTarget, false, (userSettings->GetSoundEffectVolume() / 100), 1.f, 0.0f, nullptr, nullptr, true);
+			}
 		}
 	}
 

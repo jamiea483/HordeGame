@@ -9,6 +9,7 @@
 #include "TimerManager.h"
 #include "UnrealNetwork.h"
 #include "Sound/SoundCue.h"
+#include "HordeGameUserSettings.h"
 
 #include "PhysicalMaterials/PhysicalMaterial.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -50,12 +51,12 @@ void ASWeapon::BeginPlay()
 }
 
 
-void ASWeapon::Reload()
+bool ASWeapon::Reload()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Mag size is %f."), MagSize);
 	if (CurrentMag < MagSize)
 	{
-		if (Role < ROLE_Authority)
+		if (GetLocalRole() < ROLE_Authority)
 		{
 			ServerReload();
 		}
@@ -67,8 +68,7 @@ void ASWeapon::Reload()
 			CurrentMag = MagSize;
 			bClipIsEmpty = false;
 			if (ReloadSound)
-				UGameplayStatics::SpawnSoundAttached(ReloadSound, RootComponent);
-
+				PlaySFX(ReloadSound);
 		}
 		else 
 		{
@@ -76,22 +76,25 @@ void ASWeapon::Reload()
 			MaxAmmo = 0.0f;
 			bClipIsEmpty = false;
 			if (ReloadSound)
-				UGameplayStatics::SpawnSoundAttached(ReloadSound, RootComponent);
+				PlaySFX(ReloadSound);
 		}
-		
+		return true;
 	}
 	else
-	{
+	{	
 		UE_LOG(LogTemp, Warning, TEXT("Weapon doesn't need to reload."));
+		return false;
 	}
 
 }
+
+
 
 //Fires weapon
 void ASWeapon::Fire()
 {
 	//if not server call serverfire on server and run this function
-	if (Role < ROLE_Authority)
+	if (GetLocalRole() < ROLE_Authority)
 	{
 		ServerFire();
 	}
@@ -104,7 +107,7 @@ void ASWeapon::Fire()
 	
 			WeaponRecoil();
 			if (FireSound)
-				UGameplayStatics::SpawnSoundAttached(FireSound, RootComponent);
+				PlaySFX(FireSound);
 
 
 		FVector EyeLocation;
@@ -155,7 +158,7 @@ void ASWeapon::Fire()
 		PlayFireEffect(TraceEndPoint);
 
 		//sends server trace end point to clients so they can play effects every time struct is updated.
-		if (Role == ROLE_Authority)
+		if (GetLocalRole() == ROLE_Authority)
 		{
 			HitScanTrace.TraceTo = TraceEndPoint;
 			HitScanTrace.SurfaceType = SurfaceType;
@@ -165,8 +168,11 @@ void ASWeapon::Fire()
 	}
 	else
 	{
-		if(EmptyClipSound)
-		UGameplayStatics::SpawnSoundAttached(EmptyClipSound, RootComponent);
+		if (EmptyClipSound)
+		{
+			PlaySFX(EmptyClipSound);
+		}
+		
 	}
 }
 
@@ -271,6 +277,15 @@ void ASWeapon::PlayFireEffect(const FVector &TraceEndPoint)
 	 {
 		 MyController->ClientPlayCameraShake(ShakingCam);
 	 }
+	}
+}
+
+void ASWeapon::PlaySFX(USoundCue* SoundToPlay)
+{
+	UHordeGameUserSettings* userSettings = Cast<UHordeGameUserSettings>(UHordeGameUserSettings::GetGameUserSettings());
+	if (userSettings)
+	{
+		UGameplayStatics::SpawnSoundAttached(SoundToPlay, RootComponent, "", GetActorLocation(), EAttachLocation::SnapToTarget, false, (userSettings->GetSoundEffectVolume() / 100)*(userSettings->GetMasterSoundVolume() / 100) , 1.f, 0.0f, nullptr, nullptr, true);
 	}
 }
 

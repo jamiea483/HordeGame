@@ -107,6 +107,9 @@ protected:
 
 	bool bIsAimAssistOn;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+		bool bWeaponReload;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -140,6 +143,12 @@ public:
 	/*Sets the pause state of the character when player pressed start*/
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		bool GetPauseState() { return bIsPaused; };
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		bool GetWeaponReloading() { return bWeaponReload; };
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void SetWeaponReloading(bool value) { bWeaponReload = value; };
 
 	/**True only if the player is moving else it is false
 	@MoveRight

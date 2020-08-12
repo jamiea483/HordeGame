@@ -18,7 +18,7 @@
 
 void ASGameState::SetWaveState(EWaveState NewState)
 {
-	if (Role = ROLE_Authority)
+	if (GetLocalRole() == ROLE_Authority)
 	{
 		EWaveState OldState = WaveState;
 
@@ -106,7 +106,7 @@ void ASGameState::SetPlayerStates()
 
 void ASGameState::SetCurrentWave(int32 value)
 {
-	if (Role = ROLE_Authority)
+	if (GetLocalRole() == ROLE_Authority)
 	{
 		currentWave = value;
 	}

@@ -5,6 +5,11 @@
 
 UHordeGameUserSettings::UHordeGameUserSettings()
 {
+	SetMasterSoundVolume(100);
+	SetMusicVolume(100);
+	SetSoundEffectVolume(100);
+	SetPitchSesitivity(1);
+	SetYawSesitivity(1);
 }
 
 void UHordeGameUserSettings::ApplySettings(bool bCheckForCommanLineOverrides)

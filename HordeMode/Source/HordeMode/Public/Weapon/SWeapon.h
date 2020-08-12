@@ -41,7 +41,9 @@ public:
 
 	void EndFire();
 
-	void Reload();
+	bool Reload();
+
+	void PlaySFX(USoundCue* SoundToPlay);
 
 	//Create a query that ignore Owning actor and play Area
 	void CreateLineTraceCollisionQuery(FCollisionQueryParams &QueryParams, AActor * MyOwner);

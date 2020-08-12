@@ -7,11 +7,11 @@
 
 void UGameplayWidget::SetHorizaontal(float value)
 {
-	HorizontalValue += value;
+	HorizontalValue += value/2;
 	if (HorizontalValue > 1)
 		HorizontalValue = 1;
-	else if (HorizontalValue < 0)
-		HorizontalValue = 0;
+	else if (HorizontalValue < .1)
+		HorizontalValue = .1;
 
 	HSS->SetValue(HorizontalValue);
 }
@@ -23,11 +23,11 @@ float UGameplayWidget::GetHorizaontal()
 
 void UGameplayWidget::SetVertical(float value)
 {
-	VerticalValue += value;
+	VerticalValue += value/2;
 	if (VerticalValue > 1)
 		VerticalValue = 1;
-	else if (VerticalValue < 0)
-		VerticalValue = 0;
+	else if (VerticalValue < 0.1)
+		VerticalValue = 0.1;
 
 		VSS->SetValue(VerticalValue);
 }
