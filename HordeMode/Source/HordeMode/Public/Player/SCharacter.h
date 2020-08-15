@@ -69,13 +69,21 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
 		TSubclassOf<ASWeapon> StartWeapon;
 
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Player")
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Player")
 	ASWeapon* CurrentWeapon;
+
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Player")
+		ASWeapon* BackUpWeapon;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
 		FName WeaponSocketName;
 
 	void ReloadWeapon();
+
+	virtual void SwitchWeapon();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	 void ServerSwitchWeapon();
 
 	UFUNCTION()
 	void OnHealthChanged(USHealthComponent* HealthComponent, float Health, float HealthDelta, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
@@ -107,8 +115,14 @@ protected:
 
 	bool bIsAimAssistOn;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	UPROPERTY(BlueprintReadOnly, Category = "Weapon")
 		bool bWeaponReload;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Weapon")
+		bool bSwitchingWeapon;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Weapon")
+		bool bIsFiring;
 
 public:	
 	// Called every frame
@@ -149,6 +163,18 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void SetWeaponReloading(bool value) { bWeaponReload = value; };
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		bool GetWeaponSwitching() { return bSwitchingWeapon; };
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		bool GetIsFiring() { return bIsFiring; };
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void SetIsFiring(bool value) { bIsFiring = value; };
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void SetWeaponSwitching(bool value) { bSwitchingWeapon = value; };
 
 	/**True only if the player is moving else it is false
 	@MoveRight

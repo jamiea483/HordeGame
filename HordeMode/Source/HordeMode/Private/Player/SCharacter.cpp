@@ -71,6 +71,7 @@ void ASCharacter::BeginPlay()
 		{
 			CurrentWeapon->SetOwner(this);
 			CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocketName);
+
 		}
 	}
 	HealthComp->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);	
@@ -264,6 +265,7 @@ void ASCharacter::StartFire()
 	if (bIsPaused)return;
 	if (CurrentWeapon && !bWeaponReload)
 	{
+		bIsFiring = true;
 		CurrentWeapon->StartFire();
 	}
 }
@@ -271,8 +273,9 @@ void ASCharacter::StartFire()
 void ASCharacter::StopFire()
 {
 	if (bIsPaused)return;
-	if (CurrentWeapon)
+	if (CurrentWeapon && !bWeaponReload)
 	{
+		bIsFiring = false;
 		CurrentWeapon->EndFire();
 	}
 }
@@ -287,6 +290,24 @@ void ASCharacter::ReloadWeapon()
 			bWeaponReload = true;
 		}
 	}
+}
+
+void ASCharacter::SwitchWeapon()
+{
+	if (!bSwitchingWeapon)
+	{
+		bSwitchingWeapon = true;
+	}
+}
+
+void ASCharacter::ServerSwitchWeapon_Implementation()
+{
+	SwitchWeapon();
+}
+
+bool ASCharacter::ServerSwitchWeapon_Validate()
+{
+	return true;
 }
 
 USpringArmComponent* ASCharacter::GetSpringArm()

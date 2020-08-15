@@ -11,6 +11,15 @@ class UDamageType;
 class UParticleSystem;
 class USoundCue;
 
+UENUM(BlueprintType)
+enum class EWeaponHolsterSize : uint8
+{
+	BigWeapon,
+	SmallWeapon,
+	Grenade
+
+};
+
 //Contains infomation of a single hitscan line trace
 USTRUCT()
 struct FHitScanTrace
@@ -112,15 +121,13 @@ protected:
 
 	virtual void Fire();
 
-
-
 	void PlayImpactEffect(EPhysicalSurface SurfaceType, FVector Impactpoint);
 
 	void ApplyDamage(EPhysicalSurface SurfaceType, AActor * HitActor, FVector &ShotDirection, FHitResult &OutHit, AActor * MyOwner);
 
 	
 	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerFire();
+		void ServerFire();
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void ServerReload();
@@ -135,7 +142,6 @@ protected:
 		float RateOfFire;
 
 	float TimeBetweenShots;
-
 
 	UPROPERTY(ReplicatedUsing = OnRep_HitScanLineTrace)
 		FHitScanTrace HitScanTrace;
@@ -153,5 +159,9 @@ protected:
 		float WeaponLift;
 
 		void WeaponRecoil();
+
+		/* Size of weapon for holster*/
+		UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+			EWeaponHolsterSize Holster;
 
 };

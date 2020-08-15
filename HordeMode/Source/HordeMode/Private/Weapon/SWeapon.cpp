@@ -39,6 +39,8 @@ ASWeapon::ASWeapon()
 	NetUpdateFrequency = 66.0f;
 	MinNetUpdateFrequency = 33.0f;
 	BulletSpread = 2.0f;
+
+	Holster = EWeaponHolsterSize::BigWeapon;
 }
 
 void ASWeapon::BeginPlay()
@@ -235,7 +237,8 @@ void ASWeapon::StartFire()
 		bClipIsEmpty = true;
 	}
 	float FirstDelay = FMath::Max(LastFireTime + TimeBetweenShots - GetWorld()->TimeSeconds, 0.0f);
-
+	ASCharacter* Char = Cast<ASCharacter>(GetOwner());
+	if(Char && Char->GetIsFiring())
 	GetWorldTimerManager().SetTimer(TimeHandle_TimeBeteenShots, this, &ASWeapon::Fire, TimeBetweenShots, true, FirstDelay);
 }
 
