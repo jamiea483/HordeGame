@@ -52,6 +52,39 @@ ASCharacter::ASCharacter()
 	bInPlayArea = true;
 }
 
+void ASCharacter::ChangeWeapon()
+{
+	if (BackUpWeapon)
+	{
+		ASWeapon* TempWeapon = CurrentWeapon;
+		CurrentWeapon->SetOwner(this);
+		CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, HolsterSocketName);
+		BackUpWeapon->SetOwner(this);
+		BackUpWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocketName);
+		CurrentWeapon = BackUpWeapon;
+		BackUpWeapon = TempWeapon;
+		TempWeapon = nullptr;
+	}
+
+}
+
+ASWeapon* ASCharacter::SpawnWeapon(TSubclassOf<ASWeapon> Weapon, FName SocketName)
+{
+	FActorSpawnParameters WeaponSpawnParams;
+	WeaponSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	ASWeapon* WeaponHolder;
+
+	WeaponHolder = GetWorld()->SpawnActor<ASWeapon>(Weapon, FVector::ZeroVector, FRotator::ZeroRotator, WeaponSpawnParams);
+
+	if (WeaponHolder)
+	{
+		WeaponHolder->SetOwner(this);
+		WeaponHolder->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
+
+	}
+	return WeaponHolder;
+}
+
 // Called when the game starts or when spawned
 void ASCharacter::BeginPlay()
 {
@@ -61,18 +94,10 @@ void ASCharacter::BeginPlay()
 
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		FActorSpawnParameters WeaponSpawnParams;
-		WeaponSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
 		//Spawn Default Weapon
-		CurrentWeapon = GetWorld()->SpawnActor<ASWeapon>(StartWeapon, FVector::ZeroVector, FRotator::ZeroRotator, WeaponSpawnParams);
+		CurrentWeapon = SpawnWeapon(StartWeapon, WeaponSocketName);
 
-		if (CurrentWeapon)
-		{
-			CurrentWeapon->SetOwner(this);
-			CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocketName);
-
-		}
+		BackUpWeapon = SpawnWeapon(nextWeapon, HolsterSocketName);
 	}
 	HealthComp->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);	
 }
@@ -183,6 +208,7 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ASCharacter::StartFire);
 	PlayerInputComponent->BindAction("Fire", IE_Released, this, &ASCharacter::StopFire);
 	PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &ASCharacter::ReloadWeapon);
+	PlayerInputComponent->BindAction("ChangeWeapon", IE_Pressed, this, &ASCharacter::SwitchWeapon);
 }
 
 FVector ASCharacter::GetPawnViewLocation() const
@@ -294,7 +320,7 @@ void ASCharacter::ReloadWeapon()
 
 void ASCharacter::SwitchWeapon()
 {
-	if (!bSwitchingWeapon)
+	if (!bSwitchingWeapon && BackUpWeapon)
 	{
 		bSwitchingWeapon = true;
 	}

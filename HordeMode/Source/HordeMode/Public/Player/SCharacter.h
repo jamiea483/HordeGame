@@ -25,6 +25,10 @@ public:
 	virtual void AddControllerYawInput(float Val) override;
 
 protected:
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+		void ChangeWeapon();
+
+	ASWeapon* SpawnWeapon(TSubclassOf<ASWeapon> Weapon, FName SocketName);
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -69,6 +73,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
 		TSubclassOf<ASWeapon> StartWeapon;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Player")
+		TSubclassOf<ASWeapon> nextWeapon;
+
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Player")
 	ASWeapon* CurrentWeapon;
 
@@ -77,6 +84,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
 		FName WeaponSocketName;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player")
+		FName HolsterSocketName;
 
 	void ReloadWeapon();
 
