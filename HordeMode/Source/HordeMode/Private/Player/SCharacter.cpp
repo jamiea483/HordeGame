@@ -289,7 +289,7 @@ void ASCharacter::EndAim()
 void ASCharacter::StartFire()
 {
 	if (bIsPaused)return;
-	if (CurrentWeapon && !bWeaponReload)
+	if (CurrentWeapon && !bWeaponReload && !bSwitchingWeapon)
 	{
 		bIsFiring = true;
 		CurrentWeapon->StartFire();
@@ -322,6 +322,7 @@ void ASCharacter::SwitchWeapon()
 {
 	if (!bSwitchingWeapon && BackUpWeapon)
 	{
+		StopFire();
 		bSwitchingWeapon = true;
 	}
 }

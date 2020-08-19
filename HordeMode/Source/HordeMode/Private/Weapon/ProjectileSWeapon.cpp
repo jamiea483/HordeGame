@@ -12,6 +12,8 @@ AProjectileSWeapon::AProjectileSWeapon()
 
 void AProjectileSWeapon::Fire()
 {
+	Super::Fire();
+
 	AActor* MyOwner = GetOwner();
 	if (MyOwner)
 	{
