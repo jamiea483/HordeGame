@@ -20,23 +20,6 @@ enum class EWeaponHolsterSize : uint8
 
 };
 
-//Contains infomation of a single hitscan line trace
-USTRUCT()
-struct FHitScanTrace
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-		TEnumAsByte<EPhysicalSurface> SurfaceType;
-
-	UPROPERTY()
-		FVector_NetQuantize TraceTo;
-
-	UPROPERTY()
-		uint8 ReplicationCount;
-
-};
-
 UCLASS()
 class HORDEMODE_API ASWeapon : public AActor
 {
@@ -64,29 +47,16 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 		USkeletalMeshComponent* MeshComp;
 
-	void PlayFireEffect(const FVector &TraceEndPoint);
+	void PlayFireEffect();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+		UParticleSystem* MuzzleEffect;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 		TSubclassOf<UDamageType> DamageType;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 		FName MuzzleSocketName;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-		FName TraceTargetName;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-		UParticleSystem* MuzzleEffect;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-		UParticleSystem* DefaultImpactEffect;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-		UParticleSystem* FleshImpactEffect;
-
-	//Smoke effect of bullet trail
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-		UParticleSystem* SmokeBullutEffect;
 
 	//Camera
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
@@ -121,11 +91,6 @@ protected:
 
 	virtual void Fire();
 
-	void PlayImpactEffect(EPhysicalSurface SurfaceType, FVector Impactpoint);
-
-	void ApplyDamage(EPhysicalSurface SurfaceType, AActor * HitActor, FVector &ShotDirection, FHitResult &OutHit, AActor * MyOwner);
-
-	
 	UFUNCTION(Server, Reliable, WithValidation)
 		void ServerFire();
 
@@ -142,13 +107,6 @@ protected:
 		float RateOfFire;
 
 	float TimeBetweenShots;
-
-	UPROPERTY(ReplicatedUsing = OnRep_HitScanLineTrace)
-		FHitScanTrace HitScanTrace;
-
-	//Called everytime HitScantrace Replicates.
-	UFUNCTION()
-		void OnRep_HitScanLineTrace();
 
 	/* bullet spread in degress*/
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon", meta = (Clamp=0.0f))

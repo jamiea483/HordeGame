@@ -2,27 +2,20 @@
 
 
 #include "SWeapon.h"
-#include "DrawDebugHelpers.h"
+
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
 #include "HordeMode.h"
 #include "TimerManager.h"
-#include "UnrealNetwork.h"
 #include "Sound/SoundCue.h"
 #include "HordeGameUserSettings.h"
 
-#include "PhysicalMaterials/PhysicalMaterial.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "Particles/ParticleSystemComponent.h"
 #include "PlayArea.h"
 #include "SCharacter.h"
 
 
-static int32 DebugWeaponDrawing = 0;
-FAutoConsoleVariableRef WeaponDebug(TEXT("COOP.DebugWeapons"), 
-	DebugWeaponDrawing, 
-	TEXT("Draw Debug lines for Weapons"), 
-	ECVF_Cheat);
+
 
 // Sets default values
 ASWeapon::ASWeapon()
@@ -51,7 +44,6 @@ void ASWeapon::BeginPlay()
 
 	UE_LOG(LogTemp, Warning, TEXT("Weapon has %f left."), MaxAmmo);
 }
-
 
 bool ASWeapon::Reload()
 {
@@ -87,10 +79,7 @@ bool ASWeapon::Reload()
 		UE_LOG(LogTemp, Warning, TEXT("Weapon doesn't need to reload."));
 		return false;
 	}
-
 }
-
-
 
 //Fires weapon
 void ASWeapon::Fire()
@@ -107,65 +96,6 @@ void ASWeapon::Fire()
 	{
 			CurrentMag--;
 	
-			WeaponRecoil();
-			if (FireSound)
-				PlaySFX(FireSound);
-
-
-		FVector EyeLocation;
-		FRotator EyeRotation;
-		MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
-
-		FVector ShotDirection = EyeRotation.Vector();
-
-		// Bullet spread
-		float HalfRad = FMath::DegreesToRadians(BulletSpread);
-		ShotDirection = FMath::VRandCone(ShotDirection, HalfRad, HalfRad);
-
-		FCollisionQueryParams QueryParams;
-		CreateLineTraceCollisionQuery(QueryParams, MyOwner);
-
-		FVector TraceEnd = EyeLocation + (ShotDirection * 100000);
-
-		//Particle "Target" parameter
-		FVector TraceEndPoint = TraceEnd;
-
-		EPhysicalSurface SurfaceType = SurfaceType_Default;
-
-		FHitResult OutHit;
-		if (GetWorld()->LineTraceSingleByChannel(OutHit, EyeLocation, TraceEnd, COLLISION_WEAPON, QueryParams))
-		{
-			//Blocking Hit! process Damage
-
-			AActor* HitActor = OutHit.GetActor();
-
-			SurfaceType = UPhysicalMaterial::DetermineSurfaceType(OutHit.PhysMaterial.Get());
-
-			//if(SurfaceType)
-
-			ApplyDamage(SurfaceType, HitActor, ShotDirection, OutHit, MyOwner);
-
-			PlayImpactEffect(SurfaceType, OutHit.ImpactPoint);
-
-			//Overrides Tranceendpoint if it hits something.
-			TraceEndPoint = OutHit.ImpactPoint;
-			
-		}
-
-		if (DebugWeaponDrawing > 0)
-		{
-			DrawDebugLine(GetWorld(), EyeLocation, TraceEnd, FColor::Red, false, 1.0f, 0.0f, 1.0f);
-		}
-		
-		PlayFireEffect(TraceEndPoint);
-
-		//sends server trace end point to clients so they can play effects every time struct is updated.
-		if (GetLocalRole() == ROLE_Authority)
-		{
-			HitScanTrace.TraceTo = TraceEndPoint;
-			HitScanTrace.SurfaceType = SurfaceType;
-			HitScanTrace.ReplicationCount++;
-		}
 		LastFireTime = GetWorld()->TimeSeconds;
 	}
 	else
@@ -175,6 +105,30 @@ void ASWeapon::Fire()
 			PlaySFX(EmptyClipSound);
 		}
 		
+	}
+}
+
+void ASWeapon::StartFire()
+{
+	if (CurrentMag <= 0)
+	{
+		bClipIsEmpty = true;
+	}
+	float FirstDelay = FMath::Max(LastFireTime + TimeBetweenShots - GetWorld()->TimeSeconds, 0.0f);
+	ASCharacter* Char = Cast<ASCharacter>(GetOwner());
+	if(Char && Char->GetIsFiring())
+	GetWorldTimerManager().SetTimer(TimeHandle_TimeBeteenShots, this, &ASWeapon::Fire, TimeBetweenShots, true, FirstDelay);
+}
+
+void ASWeapon::EndFire()
+{
+	GetWorldTimerManager().ClearTimer(TimeHandle_TimeBeteenShots);
+	if (bClipIsEmpty)
+	{
+		ASCharacter* Char = Cast<ASCharacter>(GetOwner());
+		if (Char)
+			Char->SetWeaponReloading(true);
+			Reload();
 	}
 }
 
@@ -195,80 +149,12 @@ void ASWeapon::CreateLineTraceCollisionQuery(FCollisionQueryParams &QueryParams,
 	}
 }
 
-void ASWeapon::PlayImpactEffect(EPhysicalSurface SurfaceType, FVector Impactpoint)
-{
-	UParticleSystem* SelectedEffect = nullptr;
-	switch (SurfaceType)
-	{
-	case SURFACE_FLESHDEFAULT:
-	case SURFACE_FLESHVALNERABLE: SelectedEffect = FleshImpactEffect; 
-		break;
-
-	default:SelectedEffect = DefaultImpactEffect;
-		break;
-	}
-
-	if (SelectedEffect)
-	{
-		FVector MuzzleLocation = MeshComp->GetSocketLocation(MuzzleSocketName);
-		FVector ShotDirection = Impactpoint - MuzzleLocation;
-		ShotDirection.Normalize();
-
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SelectedEffect, Impactpoint, ShotDirection.Rotation());
-	}
-}
-
-void ASWeapon::ApplyDamage(EPhysicalSurface SurfaceType, AActor * HitActor, FVector &ShotDirection, FHitResult &OutHit, AActor * MyOwner)
-{
-	float ActualDamage = BaseDamage;
-	if (SurfaceType == SURFACE_FLESHVALNERABLE)
-	{
-		ActualDamage *= 3.0f;
-	}
-	UGameplayStatics::ApplyPointDamage(HitActor, ActualDamage, ShotDirection, OutHit, MyOwner->GetInstigatorController(), MyOwner, DamageType);
-}
-
-
-
-void ASWeapon::StartFire()
-{
-	if (CurrentMag <= 0)
-	{
-		bClipIsEmpty = true;
-	}
-	float FirstDelay = FMath::Max(LastFireTime + TimeBetweenShots - GetWorld()->TimeSeconds, 0.0f);
-	ASCharacter* Char = Cast<ASCharacter>(GetOwner());
-	if(Char && Char->GetIsFiring())
-	GetWorldTimerManager().SetTimer(TimeHandle_TimeBeteenShots, this, &ASWeapon::Fire, TimeBetweenShots, true, FirstDelay);
-}
-
-void ASWeapon::EndFire()
-{
-	GetWorldTimerManager().ClearTimer(TimeHandle_TimeBeteenShots);
-	if (bClipIsEmpty)
-	{
-		Reload();
-	}
-}
-
 //Gun Effecfs
-void ASWeapon::PlayFireEffect(const FVector &TraceEndPoint)
+void ASWeapon::PlayFireEffect()
 {
 	if (MuzzleEffect)
 	{
 		UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, MeshComp, MuzzleSocketName);
-	}
-	if (SmokeBullutEffect)
-	{
-		FVector MuzzleLocation = MeshComp->GetSocketLocation(MuzzleSocketName);
-		UParticleSystemComponent* SmokeComp = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SmokeBullutEffect, MuzzleLocation);
-
-		if (SmokeComp)
-		{
-			SmokeComp->SetVectorParameter(TraceTargetName, TraceEndPoint);
-
-			DrawDebugSphere(GetWorld(), TraceEndPoint, 12.0f, 12, FColor::Blue, false, 5, 0, 1.0f);
-		}
 	}
 
 	// Shake Owners Camera
@@ -290,14 +176,6 @@ void ASWeapon::PlaySFX(USoundCue* SoundToPlay)
 	{
 		UGameplayStatics::SpawnSoundAttached(SoundToPlay, RootComponent, "", GetActorLocation(), EAttachLocation::SnapToTarget, false, (userSettings->GetSoundEffectVolume() / 100)*(userSettings->GetMasterSoundVolume() / 100) , 1.f, 0.0f, nullptr, nullptr, true);
 	}
-}
-
-//play cosmetic FX from server every time Struct is updated.
-void ASWeapon::OnRep_HitScanLineTrace()
-{
-	PlayFireEffect(HitScanTrace.TraceTo);
-
-	PlayImpactEffect(HitScanTrace.SurfaceType, HitScanTrace.TraceTo);
 }
 
 void ASWeapon::WeaponRecoil()
@@ -330,10 +208,3 @@ bool ASWeapon::ServerReload_Validate()
 	return true;
 }
 
-void ASWeapon::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME_CONDITION(ASWeapon, HitScanTrace, COND_SkipOwner);
-
-}

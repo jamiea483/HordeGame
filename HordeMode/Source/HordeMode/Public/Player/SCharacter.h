@@ -125,13 +125,13 @@ protected:
 
 	bool bIsAimAssistOn;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Weapon")
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Weapon")
 		bool bWeaponReload;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Weapon")
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Weapon")
 		bool bSwitchingWeapon;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Weapon")
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Weapon")
 		bool bIsFiring;
 
 public:	

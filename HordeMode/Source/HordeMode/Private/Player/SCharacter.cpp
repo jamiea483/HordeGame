@@ -370,6 +370,12 @@ void ASCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLi
 
 	DOREPLIFETIME(ASCharacter, bIsDead);
 
+	DOREPLIFETIME(ASCharacter, bWeaponReload);
+
+	DOREPLIFETIME(ASCharacter, bSwitchingWeapon);
+
+	DOREPLIFETIME(ASCharacter, bIsFiring);
+
 	DOREPLIFETIME(ASCharacter, AimOffSetPitch);
 	
 }

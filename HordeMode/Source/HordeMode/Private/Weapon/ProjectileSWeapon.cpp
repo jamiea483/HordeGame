@@ -12,11 +12,13 @@ AProjectileSWeapon::AProjectileSWeapon()
 
 void AProjectileSWeapon::Fire()
 {
-	Super::Fire();
 
 	AActor* MyOwner = GetOwner();
-	if (MyOwner)
+	if(MyOwner && CurrentMag > 0.0f)
 	{
+		WeaponRecoil();
+		if (FireSound)
+			PlaySFX(FireSound);
 
 		FVector EyeLocation;
 		FRotator EyeRotation;
@@ -35,5 +37,5 @@ void AProjectileSWeapon::Fire()
 		}
 	}
 	
-	
+	Super::Fire();
 }
