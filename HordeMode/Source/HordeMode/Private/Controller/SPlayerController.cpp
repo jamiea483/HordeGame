@@ -5,7 +5,7 @@
 #include "PauseMenuWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "HordeGameInstance.h"
-#include "SCharacter.h"
+#include "PlayerSCharacter.h"
 
 void ASPlayerController::LoadPauseMenu()
 {
@@ -39,7 +39,7 @@ void ASPlayerController::SetupInputComponent()
 
 void ASPlayerController::PauseGame()
 {
-	ASCharacter* MyOwner = Cast<ASCharacter>(GetPawn());
+	APlayerSCharacter* MyOwner = Cast<APlayerSCharacter>(GetPawn());
 	if (MyOwner)
 	{
 		if (!MyOwner->GetPauseState())
@@ -69,7 +69,7 @@ void ASPlayerController::UnPauseGame()
 	UHordeGameInstance* GI = GetGameInstance<UHordeGameInstance>();
 	if (GI)
 	{
-		ASCharacter* MyOwner = Cast<ASCharacter>(GetPawn());
+		APlayerSCharacter* MyOwner = Cast<APlayerSCharacter>(GetPawn());
 		if (MyOwner)
 		{
 			if (GI->GetOnlineState())

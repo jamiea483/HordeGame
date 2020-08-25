@@ -8,7 +8,7 @@ public class HordeModeEditorTarget : TargetRules
 	public HordeModeEditorTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Editor;
-
+        
 		ExtraModuleNames.AddRange( new string[] { "HordeMode" } );
 	}
 }

@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SWeapon.h"
+#include "Weapon/SWeapon.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
@@ -11,6 +11,7 @@
 #include "HordeGameUserSettings.h"
 
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/SphereComponent.h"
 #include "PlayArea.h"
 #include "SCharacter.h"
 
@@ -22,7 +23,16 @@ ASWeapon::ASWeapon()
 {
 	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	RootComponent = MeshComp;
-	
+	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
+	SphereComp->SetupAttachment(RootComponent);
+	SphereComp->SetSphereRadius(.0f);
+
+	if (SphereComp)
+	{
+		SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ASWeapon::OnBeginOverlap);
+		SphereComp->OnComponentEndOverlap.AddDynamic(this, &ASWeapon::OnOverlapEnd);
+	}
+
 	BaseDamage = 20;
 	RateOfFire = 600;
 
@@ -149,6 +159,16 @@ void ASWeapon::CreateLineTraceCollisionQuery(FCollisionQueryParams &QueryParams,
 	}
 }
 
+void ASWeapon::IncreaseSizeOfPickupSphere()
+{
+	SphereComp->SetSphereRadius(100.0f);
+}
+
+void ASWeapon::DecreaseSizeOfPickupSphere()
+{
+	SphereComp->SetSphereRadius(.0f);
+}
+
 //Gun Effecfs
 void ASWeapon::PlayFireEffect()
 {
@@ -184,6 +204,30 @@ void ASWeapon::WeaponRecoil()
 	if (MyOwner)
 	{
 		MyOwner->AddControllerPitchInput(WeaponLift);
+	}
+}
+
+void ASWeapon::OnBeginOverlap(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	if (OtherActor->ActorHasTag("Player") && GetOwner() == nullptr)
+	{
+		ASCharacter* Char = Cast<ASCharacter>(OtherActor);
+		if (Char)
+		{
+			Char->WeaponList.AddUnique(this);
+		}
+	}
+}
+
+void ASWeapon::OnOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
+{
+	if (OtherActor->ActorHasTag("Player"))
+	{
+		ASCharacter* Char = Cast<ASCharacter>(OtherActor);
+		if (Char)
+		{
+			Char->WeaponList.Remove(this);
+		}
 	}
 }
 

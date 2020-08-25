@@ -20,10 +20,6 @@ public:
 	// Sets default values for this character's properties
 	ASCharacter();
 
-	virtual void AddControllerPitchInput(float Val) override;
-
-	virtual void AddControllerYawInput(float Val) override;
-
 protected:
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 		void ChangeWeapon();
@@ -32,11 +28,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	//Player Forward Movement
-	void MoveForward(float value);
-
-	//Player Side Movement
-	void MoveRight(float value);
 
 	//Calls crouch function in character
 	void BeginCrouch();
@@ -102,28 +93,15 @@ protected:
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Player")
 	bool bIsDead;
 
+	/*Player Pause the Game*/
+	UPROPERTY(BlueprintReadOnly, Category = "Player")
+		bool bIsPaused;
+
 	/*The pitch of getcontrolRotaion - Getactorrotation normalize */
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Player")
 		float AimOffSetPitch;
 
 	bool bInPlayArea;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Player", meta = (ClampMin = 0.0))
-		float PlayCountDown;
-
-	float ElaspeTime;
-
-	/*Player Pause the Game*/
-	UPROPERTY(BlueprintReadOnly, Category = "Player")
-		bool bIsPaused;
-
-	//returns true if line trance hits an enemy
-	bool AimAssist(float DeltaTime);
-
-	UPROPERTY(EditDefaultsOnly, Category = "AimAssist", meta = (ClampMin = 0.0))
-		float MagnetismStrenght;
-
-	bool bIsAimAssistOn;
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Weapon")
 		bool bWeaponReload;
@@ -138,11 +116,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	virtual FVector GetPawnViewLocation() const override;
-
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void StartFire();
 
@@ -156,17 +129,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void SetPlayArea(bool Value) { bInPlayArea = Value; };
-
-	UFUNCTION(BlueprintCallable, Category = "Player")
-		void SetPlayContDown(float Value) { PlayCountDown = Value; };
-
-	/*Sets the pause state of the character when player pressed start*/
-	UFUNCTION(BlueprintCallable, Category = "Player")
-		void SetPauseState(bool value) { bIsPaused = value; };
-
-	/*Sets the pause state of the character when player pressed start*/
-	UFUNCTION(BlueprintCallable, Category = "Player")
-		bool GetPauseState() { return bIsPaused; };
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		bool GetWeaponReloading() { return bWeaponReload; };
@@ -186,8 +148,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void SetWeaponSwitching(bool value) { bSwitchingWeapon = value; };
 
-	/**True only if the player is moving else it is false
-	@MoveRight
-	*/
-	bool bIsMoving;
+	///Pick up System
+	/**An Array that holds all the weapon in range of the character that he can Pick up*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
+		TArray<ASWeapon*> WeaponList;
+
+	/**An Array that holds all the weapon in range of the character that he can Pick up*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
+		bool bCanPickUp;
 };

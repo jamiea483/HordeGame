@@ -40,12 +40,23 @@ public:
 	//Create a query that ignore Owning actor and play Area
 	void CreateLineTraceCollisionQuery(FCollisionQueryParams &QueryParams, AActor * MyOwner);
 
+	//Changes the size of the Collion sphere when the Weapon has no owner.
+	UFUNCTION()
+	void IncreaseSizeOfPickupSphere();
+
+	//Changes the size of the Collion sphere when the Weapon has no owner.
+	UFUNCTION()
+		void DecreaseSizeOfPickupSphere();
+
 protected:
 
 	virtual void BeginPlay()override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 		USkeletalMeshComponent* MeshComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	class USphereComponent* SphereComp;
 
 	void PlayFireEffect();
 
@@ -122,4 +133,13 @@ protected:
 		UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 			EWeaponHolsterSize Holster;
 
+		UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+			FName WeaponName;
+
+		//Collision
+		UFUNCTION()
+			virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+		UFUNCTION()
+			virtual void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 };
