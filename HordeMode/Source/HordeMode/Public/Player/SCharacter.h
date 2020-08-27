@@ -11,6 +11,8 @@ class USpringArmComponent;
 class ASWeapon;
 class USHealthComponent;
 
+
+
 UCLASS()
 class HORDEMODE_API ASCharacter : public ACharacter
 {
@@ -19,6 +21,10 @@ class HORDEMODE_API ASCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ASCharacter();
+	
+	UCameraComponent* GetCamera() { return Camera; };
+
+	ASWeapon* GetCurrentWeapon() { return CurrentWeapon; };
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
@@ -149,11 +155,10 @@ public:
 		void SetWeaponSwitching(bool value) { bSwitchingWeapon = value; };
 
 	///Pick up System
-	/**An Array that holds all the weapon in range of the character that he can Pick up*/
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
-		TArray<ASWeapon*> WeaponList;
+	protected:
+		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+			class UPickUpComponent* PickupComp;
 
-	/**An Array that holds all the weapon in range of the character that he can Pick up*/
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
-		bool bCanPickUp;
+		public:
+			class UPickUpComponent* GetPickupCompoment() { return PickupComp; };
 };

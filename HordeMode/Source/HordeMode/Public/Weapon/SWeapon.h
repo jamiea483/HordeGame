@@ -3,10 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "InteractBase.h"
 #include "SWeapon.generated.h"
 
-class USkeletalMeshComponent;
 class UDamageType;
 class UParticleSystem;
 class USoundCue;
@@ -21,7 +20,7 @@ enum class EWeaponHolsterSize : uint8
 };
 
 UCLASS()
-class HORDEMODE_API ASWeapon : public AActor
+class HORDEMODE_API ASWeapon : public AInteractBase
 {
 	GENERATED_BODY()
 	
@@ -39,24 +38,16 @@ public:
 
 	//Create a query that ignore Owning actor and play Area
 	void CreateLineTraceCollisionQuery(FCollisionQueryParams &QueryParams, AActor * MyOwner);
-
-	//Changes the size of the Collion sphere when the Weapon has no owner.
+	
 	UFUNCTION()
-	void IncreaseSizeOfPickupSphere();
+		void AddtoMaxAmmo(float value);
 
-	//Changes the size of the Collion sphere when the Weapon has no owner.
 	UFUNCTION()
-		void DecreaseSizeOfPickupSphere();
+		float GetRefillAmount() { return RefillAmmo; };
 
 protected:
 
 	virtual void BeginPlay()override;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-		USkeletalMeshComponent* MeshComp;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	class USphereComponent* SphereComp;
 
 	void PlayFireEffect();
 
@@ -88,6 +79,10 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 		float CurrentMag;
+
+	/*Amount of ammo the character is carring*/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+		float RefillAmmo;
 
 	bool bClipIsEmpty;
 
@@ -132,14 +127,4 @@ protected:
 		/* Size of weapon for holster*/
 		UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 			EWeaponHolsterSize Holster;
-
-		UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-			FName WeaponName;
-
-		//Collision
-		UFUNCTION()
-			virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-		UFUNCTION()
-			virtual void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 };

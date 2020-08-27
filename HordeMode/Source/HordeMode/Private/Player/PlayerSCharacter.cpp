@@ -4,9 +4,9 @@
 #include "PlayerSCharacter.h"
 #include "Components/InputComponent.h"
 #include "SHealthComponent.h"
+#include "PickUpComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "HordeMode.h"
-
 
 #include "Camera/CameraComponent.h"
 #include "SPlayerController.h"
@@ -22,6 +22,9 @@ APlayerSCharacter::APlayerSCharacter() {
 // Called every frame
 void APlayerSCharacter::Tick(float DeltaTime)
 {
+	if(PickupComp)
+		PickupComp->BestInteractable();
+
 	float TargetFOV = AimDownSight ? ZoomedFOV : DefaultFOV;
 	float NewFOV = FMath::FInterpTo(Camera->FieldOfView, TargetFOV, DeltaTime, ZoomInterpSpeed);
 	Camera->SetFieldOfView(NewFOV);

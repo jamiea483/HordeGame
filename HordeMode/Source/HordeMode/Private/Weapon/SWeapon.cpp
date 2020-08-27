@@ -10,8 +10,6 @@
 #include "Sound/SoundCue.h"
 #include "HordeGameUserSettings.h"
 
-#include "Components/SkeletalMeshComponent.h"
-#include "Components/SphereComponent.h"
 #include "PlayArea.h"
 #include "SCharacter.h"
 
@@ -21,18 +19,6 @@
 // Sets default values
 ASWeapon::ASWeapon()
 {
-	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
-	RootComponent = MeshComp;
-	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
-	SphereComp->SetupAttachment(RootComponent);
-	SphereComp->SetSphereRadius(.0f);
-
-	if (SphereComp)
-	{
-		SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ASWeapon::OnBeginOverlap);
-		SphereComp->OnComponentEndOverlap.AddDynamic(this, &ASWeapon::OnOverlapEnd);
-	}
-
 	BaseDamage = 20;
 	RateOfFire = 600;
 
@@ -159,14 +145,14 @@ void ASWeapon::CreateLineTraceCollisionQuery(FCollisionQueryParams &QueryParams,
 	}
 }
 
-void ASWeapon::IncreaseSizeOfPickupSphere()
+void ASWeapon::AddtoMaxAmmo(float value)
 {
-	SphereComp->SetSphereRadius(100.0f);
-}
-
-void ASWeapon::DecreaseSizeOfPickupSphere()
-{
-	SphereComp->SetSphereRadius(.0f);
+	if (MaxAmmo < MaxAmmoToCarry)
+	{
+		MaxAmmo += value;
+		if (MaxAmmo > MaxAmmoToCarry)
+			MaxAmmo = MaxAmmoToCarry;
+	}
 }
 
 //Gun Effecfs
@@ -204,30 +190,6 @@ void ASWeapon::WeaponRecoil()
 	if (MyOwner)
 	{
 		MyOwner->AddControllerPitchInput(WeaponLift);
-	}
-}
-
-void ASWeapon::OnBeginOverlap(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
-{
-	if (OtherActor->ActorHasTag("Player") && GetOwner() == nullptr)
-	{
-		ASCharacter* Char = Cast<ASCharacter>(OtherActor);
-		if (Char)
-		{
-			Char->WeaponList.AddUnique(this);
-		}
-	}
-}
-
-void ASWeapon::OnOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
-{
-	if (OtherActor->ActorHasTag("Player"))
-	{
-		ASCharacter* Char = Cast<ASCharacter>(OtherActor);
-		if (Char)
-		{
-			Char->WeaponList.Remove(this);
-		}
 	}
 }
 

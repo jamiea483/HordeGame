@@ -5,6 +5,8 @@
 #include "Engine/World.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/SphereComponent.h"
+#include "PickUpComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "HordeMode.h"
 #include "SHealthComponent.h"
@@ -24,6 +26,8 @@ ASCharacter::ASCharacter()
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->bUsePawnControlRotation = true;
 	SpringArm->SetupAttachment(RootComponent);
+
+	PickupComp  = CreateDefaultSubobject<UPickUpComponent>(TEXT("pickup Component"));
 
 	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	GetMovementComponent()->GetNavAgentPropertiesRef().bCanJump = true;
@@ -90,7 +94,7 @@ void ASCharacter::BeginPlay()
 	{
 		//Spawn Default Weapon
 		CurrentWeapon = SpawnWeapon(StartWeapon, WeaponSocketName);
-		if(ActorHasTag("Player"))
+		
 		BackUpWeapon = SpawnWeapon(nextWeapon, HolsterSocketName);
 	}
 	HealthComp->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);	
@@ -100,8 +104,6 @@ void ASCharacter::BeginPlay()
 void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	bCanPickUp = WeaponList.Num() > 0 ? true : false;
 
 		if (GetLocalRole() == ROLE_Authority)
 		{
@@ -164,7 +166,7 @@ void ASCharacter::ReloadWeapon()
 {	
 	if ( bIsPaused)return;
 
-	if (!bCanPickUp)
+	if (!PickupComp->GetCanPickup())
 	{
 		if (CurrentWeapon)
 		{
@@ -176,7 +178,7 @@ void ASCharacter::ReloadWeapon()
 	}
 	else
 	{
-		///TODO:Allow player to pick up weapon or ammo.
+		PickupComp->OnInteract();
 	}
 
 }
@@ -204,6 +206,10 @@ USpringArmComponent* ASCharacter::GetSpringArm()
 {
 	return SpringArm;
 }
+
+
+
+///HealthComponent
 
 void ASCharacter::OnHealthChanged(USHealthComponent* HealthComponent, float Health, float HealthDelta, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
 {
