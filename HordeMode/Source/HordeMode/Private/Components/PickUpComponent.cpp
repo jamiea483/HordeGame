@@ -7,11 +7,12 @@
 #include "SWeapon.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SphereComponent.h"
+#include "UnrealNetwork.h"
 
 // Sets default values for this component's properties
 UPickUpComponent::UPickUpComponent()
 {
-
+	SetIsReplicated(true);
 	// ...
 }
 
@@ -67,7 +68,6 @@ void UPickUpComponent::GetBestInteractable()
 	if (Char)
 	for (AInteractBase* Interactable : WeaponList)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Best Interactable"));
 		//If character is looking toward it is 1 or opposite direction of the interactable is it -1. 
 		float DotOfInteractable = FVector::DotProduct(Char->GetCamera()->GetForwardVector(), (Interactable->GetSphereComponent()->GetCenterOfMass() - Char->GetCamera()->GetComponentLocation()).GetSafeNormal());
 
@@ -80,7 +80,6 @@ void UPickUpComponent::GetBestInteractable()
 	if (InteractableInfo.Interactable)
 		SetBestInteractable(InteractableInfo.Interactable);
 }
-
 
 /*If an interactable was pass Set the interactableitem name to the interactable and if nothing was pass
 Interactableitem equal null*/
@@ -104,4 +103,10 @@ void UPickUpComponent::SetBestInteractable(AInteractBase* Interactable)
 	}
 }
 
+void UPickUpComponent::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	DOREPLIFETIME(UPickUpComponent, bCanPickUp);
+
+}

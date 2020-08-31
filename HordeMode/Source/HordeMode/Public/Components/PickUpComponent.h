@@ -45,6 +45,8 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 		FOnActiveBestInteractable ActiveBestInteractable;
 
+
+
 protected:
 	/**Adds interactable to weaponlist as a unique*/
 	UFUNCTION(BlueprintCallable, Category = "Interact")
@@ -58,7 +60,6 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Interact")
 		void SetBestInteractable(class AInteractBase* Interactable);
 
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interact")
 		FName InteractableName;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interact")
@@ -71,12 +72,13 @@ protected:
 	UPROPERTY()
 		FInteractableVariables InteractableInfo;
 
-
 	/**An Array that holds all the weapon in range of the character that he can Pick up*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
 		TArray<class AInteractBase*> WeaponList;
 
 	/**An Array that holds all the weapon in range of the character that he can Pick up*/
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, Category = "Player")
 		bool bCanPickUp;
+
+	virtual void GetLifetimeReplicatedProps(TArray < FLifetimeProperty > & OutLifetimeProps) const override;
 };

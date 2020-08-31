@@ -85,12 +85,25 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
 		FName HolsterSocketName;
 
-	void ReloadWeapon();
-
 	virtual void SwitchWeapon();
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	 void ServerSwitchWeapon();
+
+	///Reloading
+public:
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		bool GetWeaponReloading() { return bWeaponReload; };
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void SetWeaponReloading(bool value) { bWeaponReload = value; };
+
+	void ReloadWeapon();
+
+protected:
+	
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerReloadAnimation();
 
 	UFUNCTION()
 	void OnHealthChanged(USHealthComponent* HealthComponent, float Health, float HealthDelta, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
@@ -137,12 +150,6 @@ public:
 		void SetPlayArea(bool Value) { bInPlayArea = Value; };
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		bool GetWeaponReloading() { return bWeaponReload; };
-
-	UFUNCTION(BlueprintCallable, Category = "Player")
-		void SetWeaponReloading(bool value) { bWeaponReload = value; };
-
-	UFUNCTION(BlueprintCallable, Category = "Player")
 		bool GetWeaponSwitching() { return bSwitchingWeapon; };
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
@@ -161,4 +168,9 @@ public:
 
 		public:
 			class UPickUpComponent* GetPickupCompoment() { return PickupComp; };
+
+			UFUNCTION(Server, Reliable, WithValidation)
+				void ServerInteract();
+
+			
 };

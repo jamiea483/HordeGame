@@ -32,7 +32,8 @@ public:
 
 	void EndFire();
 
-	bool Reload();
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void Reload();
 
 	void PlaySFX(USoundCue* SoundToPlay);
 
@@ -44,6 +45,12 @@ public:
 
 	UFUNCTION()
 		float GetRefillAmount() { return RefillAmmo; };
+
+	UFUNCTION()
+		float GetCurrentMag() { return CurrentMag; };
+
+	UFUNCTION()
+		float GetMagSize() { return MagSize; };
 
 protected:
 

@@ -4,6 +4,7 @@
 #include "ProjectileSWeapon.h"
 #include "Engine/World.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "UnrealNetwork.h"
 
 AProjectileSWeapon::AProjectileSWeapon()
 {
@@ -12,30 +13,53 @@ AProjectileSWeapon::AProjectileSWeapon()
 
 void AProjectileSWeapon::Fire()
 {
-
 	AActor* MyOwner = GetOwner();
 	if(MyOwner && CurrentMag > 0.0f)
 	{
+		Super::Fire();
+
 		WeaponRecoil();
 		if (FireSound)
 			PlaySFX(FireSound);
 
-		FVector EyeLocation;
-		FRotator EyeRotation;
-		MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
-
-		FVector MuzzleLocation = MeshComp->GetSocketLocation(MuzzleSocketName);
-
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = GetOwner();
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-		if (Grenades)
+		SpawnProjectile(MyOwner, Grenades);
+		
+		if (GetLocalRole() == ROLE_Authority)
 		{
-			GetWorld()->SpawnActor<AActor>(Grenades, MuzzleLocation, EyeRotation, SpawnParams);
-			UE_LOG(LogTemp, Warning, TEXT("Spawned Grenade"));
+			projectile.MyOwner = MyOwner;
+			projectile.Projectile = Grenades;
+			projectile.ReplicationCount++;
 		}
 	}
-	
-	Super::Fire();
+}
+
+void AProjectileSWeapon::SpawnProjectile(AActor * MyOwner, TSubclassOf<AActor> Projectile)
+{
+	FVector EyeLocation;
+	FRotator EyeRotation;
+	MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
+
+	FVector MuzzleLocation = MeshComp->GetSocketLocation(MuzzleSocketName);
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = GetOwner();
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	if (Projectile)
+	{
+		GetWorld()->SpawnActor<AActor>(Projectile, MuzzleLocation, EyeRotation, SpawnParams);
+		UE_LOG(LogTemp, Warning, TEXT("Spawned Grenade"));
+	}
+}
+
+void AProjectileSWeapon::OnRep_SpawnProjectile()
+{
+	SpawnProjectile(projectile.MyOwner, projectile.Projectile);
+}
+
+void AProjectileSWeapon::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME_CONDITION(AProjectileSWeapon, projectile, COND_SkipOwner);
 }

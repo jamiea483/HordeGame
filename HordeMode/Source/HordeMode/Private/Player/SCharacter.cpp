@@ -164,27 +164,44 @@ void ASCharacter::StopFire()
 
 void ASCharacter::ReloadWeapon()
 {	
-	if ( bIsPaused)return;
-
+	if (bIsPaused)return;
 	if (!PickupComp->GetCanPickup())
 	{
-		if (CurrentWeapon)
+		if (CurrentWeapon->GetCurrentMag() != CurrentWeapon->GetMagSize())
 		{
-			if (CurrentWeapon->Reload())
+			if (GetLocalRole() < ROLE_Authority)
 			{
-					bWeaponReload = true;
+				ServerReloadAnimation();
 			}
+			bWeaponReload = true;
 		}
 	}
 	else
 	{
+		if (GetLocalRole() < ROLE_Authority)
+		{
+			ServerInteract();
+		}
 		PickupComp->OnInteract();
 	}
+}
 
+void ASCharacter::ServerReloadAnimation_Implementation()
+{
+	bWeaponReload = true;	
+}
+
+bool ASCharacter::ServerReloadAnimation_Validate()
+{
+	return true;
 }
 
 void ASCharacter::SwitchWeapon()
 {
+	if (GetLocalRole() < ROLE_Authority)
+	{
+		ServerSwitchWeapon();
+	}
 	if (!bSwitchingWeapon && BackUpWeapon)
 	{
 		StopFire();
@@ -202,17 +219,28 @@ bool ASCharacter::ServerSwitchWeapon_Validate()
 	return true;
 }
 
+///Interaction
+void ASCharacter::ServerInteract_Implementation()
+{
+	if (PickupComp)
+		PickupComp->OnInteract();
+}
+
+bool ASCharacter::ServerInteract_Validate()
+{
+	return true;
+}
+
 USpringArmComponent* ASCharacter::GetSpringArm()
 {
 	return SpringArm;
 }
 
-
-
 ///HealthComponent
 
 void ASCharacter::OnHealthChanged(USHealthComponent* HealthComponent, float Health, float HealthDelta, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Ouch."));
 	if (Health <= 0.0f && !bIsDead)
 	{
 		//Died
@@ -227,7 +255,6 @@ void ASCharacter::OnHealthChanged(USHealthComponent* HealthComponent, float Heal
 		
 		DetachFromControllerPendingDestroy();
 
-		CurrentWeapon->IncreaseSizeOfPickupSphere();
 		CurrentWeapon->SetOwner(nullptr);
 		CurrentWeapon = nullptr;
 
@@ -241,6 +268,8 @@ void ASCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLi
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ASCharacter, CurrentWeapon);
+
+	DOREPLIFETIME(ASCharacter, BackUpWeapon);
 
 	DOREPLIFETIME(ASCharacter, bIsDead);
 

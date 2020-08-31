@@ -22,6 +22,8 @@ APlayerSCharacter::APlayerSCharacter() {
 // Called every frame
 void APlayerSCharacter::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
+
 	if(PickupComp)
 		PickupComp->BestInteractable();
 

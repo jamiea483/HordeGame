@@ -30,14 +30,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	//Changes the size of the Collion sphere when the Weapon has no owner.
-	UFUNCTION()
-		void IncreaseSizeOfPickupSphere();
-
-	//Changes the size of the Collion sphere when the Weapon has no owner.
-	UFUNCTION()
-		void DecreaseSizeOfPickupSphere();
-
 	UFUNCTION()
 		USphereComponent* GetSphereComponent() { return SphereComp; };
 

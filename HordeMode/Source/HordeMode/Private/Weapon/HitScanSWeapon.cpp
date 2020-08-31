@@ -73,7 +73,6 @@ void AHitScanSWeapon::Fire()
 
 			//Overrides Tranceendpoint if it hits something.
 			TraceEndPoint = OutHit.ImpactPoint;
-
 		}
 
 		if (DebugWeaponDrawing > 0)

@@ -16,7 +16,7 @@ AInteractBase::AInteractBase()
 	RootComponent = MeshComp;
 	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	SphereComp->SetupAttachment(RootComponent);
-	SphereComp->SetSphereRadius(.0f);
+	SphereComp->SetSphereRadius(100.0f);
 
 	if (SphereComp)
 	{
@@ -38,16 +38,6 @@ void AInteractBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-}
-
-void AInteractBase::IncreaseSizeOfPickupSphere()
-{
-	SphereComp->SetSphereRadius(100.0f);
-}
-
-void AInteractBase::DecreaseSizeOfPickupSphere()
-{
-	SphereComp->SetSphereRadius(.0f);
 }
 
 void AInteractBase::OnBeginOverlap(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)

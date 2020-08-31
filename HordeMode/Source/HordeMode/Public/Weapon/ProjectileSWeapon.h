@@ -6,6 +6,21 @@
 #include "Weapon/SWeapon.h"
 #include "ProjectileSWeapon.generated.h"
 
+USTRUCT(BlueprintType)
+struct FProjectileFired
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY()
+	TSubclassOf<AActor> Projectile;
+
+	UPROPERTY()
+	AActor* MyOwner;
+
+	UPROPERTY()
+		uint8 ReplicationCount;
+};
+
 /**
  * 
  */
@@ -20,8 +35,16 @@ public:
 
 	virtual void Fire() override;
 
-protected:
+	void SpawnProjectile(AActor * MyOwner, TSubclassOf<AActor> Projectile);
 
+protected:
 		UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 			TSubclassOf<AActor> Grenades;
+
+		UPROPERTY(ReplicatedUsing = OnRep_SpawnProjectile)
+		FProjectileFired projectile;
+
+		//Called everytime HitScantrace Replicates.
+		UFUNCTION()
+			void OnRep_SpawnProjectile();
 };

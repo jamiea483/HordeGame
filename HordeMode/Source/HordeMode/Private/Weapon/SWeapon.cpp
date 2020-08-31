@@ -41,7 +41,7 @@ void ASWeapon::BeginPlay()
 	UE_LOG(LogTemp, Warning, TEXT("Weapon has %f left."), MaxAmmo);
 }
 
-bool ASWeapon::Reload()
+void ASWeapon::Reload()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Mag size is %f."), MagSize);
 	if (CurrentMag < MagSize)
@@ -68,12 +68,10 @@ bool ASWeapon::Reload()
 			if (ReloadSound)
 				PlaySFX(ReloadSound);
 		}
-		return true;
 	}
 	else
 	{	
 		UE_LOG(LogTemp, Warning, TEXT("Weapon doesn't need to reload."));
-		return false;
 	}
 }
 
@@ -100,7 +98,6 @@ void ASWeapon::Fire()
 		{
 			PlaySFX(EmptyClipSound);
 		}
-		
 	}
 }
 
@@ -123,32 +120,24 @@ void ASWeapon::EndFire()
 	{
 		ASCharacter* Char = Cast<ASCharacter>(GetOwner());
 		if (Char)
-			Char->SetWeaponReloading(true);
-			Reload();
+			Char->ReloadWeapon();
 	}
 }
 
 void ASWeapon::CreateLineTraceCollisionQuery(FCollisionQueryParams &QueryParams, AActor * MyOwner)
 {
-	//Sets the Query so it doesn't collide with the play area trigger and selfactor.
-	for (TActorIterator<APlayArea> Itr(GetWorld()); Itr; ++Itr)
-	{
-		APlayArea* PlayZone = Cast<APlayArea>(*Itr);
-		if (PlayZone)
-		{
 			QueryParams.AddIgnoredActor(MyOwner);
 			QueryParams.AddIgnoredActor(this);
-			QueryParams.AddIgnoredActor(PlayZone);
 			QueryParams.bTraceComplex = true;
 			QueryParams.bReturnPhysicalMaterial = true;
-		}
-	}
 }
 
 void ASWeapon::AddtoMaxAmmo(float value)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Max ammo = %f and Ammo to carry = %f."), MaxAmmo, MaxAmmoToCarry)
 	if (MaxAmmo < MaxAmmoToCarry)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Picked up ammo."))
 		MaxAmmo += value;
 		if (MaxAmmo > MaxAmmoToCarry)
 			MaxAmmo = MaxAmmoToCarry;
@@ -213,4 +202,3 @@ bool ASWeapon::ServerReload_Validate()
 {
 	return true;
 }
-
