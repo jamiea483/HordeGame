@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "InteractInterface.h"
+#include "Weapon/InteractInterface.h"
 #include "PickUpComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnActiveBestInteractable);

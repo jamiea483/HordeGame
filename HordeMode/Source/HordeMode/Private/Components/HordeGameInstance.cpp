@@ -1,15 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "HordeGameInstance.h"
+#include "Components/HordeGameInstance.h"
 #include "Engine/World.h"
-#include "MenuController.h"
-#include "MainMenuWidget.h"
-#include "EnterPasswordWidget.h"
+#include "Controller/MenuController.h"
+#include "UI/MainMenuWidget.h"
+#include "UI/EnterPasswordWidget.h"
 #include "Components/EditableTextBox.h"
 #include "Components/WidgetSwitcher.h"
 #include "OnlineSubsystem.h"
 #include "OnlineSessionSettings.h"
+#include "Interfaces/OnlineSessionInterface.h"
 #include "Kismet/GameplayStatics.h"
 
 static const FName SESSION_NAME = TEXT("GameSession");

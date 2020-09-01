@@ -7,7 +7,7 @@ public class HordeModeTarget : TargetRules
 {
 	public HordeModeTarget(TargetInfo Target) : base(Target)
 	{
-		Type = TargetType.Game;
+        Type = TargetType.Game;
 
 		ExtraModuleNames.AddRange( new string[] { "HordeMode" } );
 	}

@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SHealthComponent.h"
+#include "Components/SHealthComponent.h"
 #include "GameFramework/Actor.h"
-#include "HordeModeGameMode.h"
+#include "GameMode/HordeModeGameMode.h"
 #include "UnrealNetwork.h"
 #include "Engine/World.h"
 
@@ -11,17 +11,17 @@
 // Sets default values for this component's properties
 USHealthComponent::USHealthComponent()
 {
+	
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
 
+	SetIsReplicatedByDefault(true);
 	bisDead = false;
 	// ...
 
 	TeamNum = 255;
 
 	MaxHealthPoints = 100;
-	SetIsReplicated(true);
 }
 
 

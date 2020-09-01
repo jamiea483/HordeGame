@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MenuController.h"
-#include "HordeGameInstance.h"
-#include "MainMenuWidget.h"
+#include "Controller/MenuController.h"
+#include "Components/HordeGameInstance.h"
+#include "UI/MainMenuWidget.h"
 #include "Components/EditableTextBox.h"
-#include "HordeGameUserSettings.h"
-#include "GameplayWidget.h"
-#include "AudioWidget.h"
+#include "Settings/HordeGameUserSettings.h"
+#include "UI/GameplayWidget.h"
+#include "UI/AudioWidget.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"

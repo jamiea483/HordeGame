@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "EnterPasswordWidget.h"
+#include "UI/EnterPasswordWidget.h"
 #include "Components/EditableTextBox.h"
-#include "HordeGameInstance.h"
+#include "Components/HordeGameInstance.h"
 
 
 

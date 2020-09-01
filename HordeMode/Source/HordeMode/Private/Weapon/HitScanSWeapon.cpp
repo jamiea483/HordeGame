@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "HitScanSWeapon.h"
+#include "Weapon/HitScanSWeapon.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "UnrealNetwork.h"
-#include "HordeMode.h"
+#include "../../HordeMode.h"
 
 #include "Particles/ParticleSystemComponent.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"

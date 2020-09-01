@@ -1,20 +1,20 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BasicAI.h"
+#include "AI/Basic/BasicAI.h"
 #include "NavigationSystem.h"
 #include "NavigationPath.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 #include "Sound/SoundCue.h"
-#include "HordeGameUserSettings.h"
+#include "Settings/HordeGameUserSettings.h"
 
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Character.h"
-#include "SCharacter.h"
-#include "SHealthComponent.h"
+#include "Player/SCharacter.h"
+#include "Components/SHealthComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
 
 
@@ -37,6 +37,7 @@ ABasicAI::ABasicAI()
 	RootComponent = MeshComp;
 
 	HealthComp = CreateDefaultSubobject<USHealthComponent>(TEXT("Health Component"));
+	if(HealthComp)
 	HealthComp->OnHealthChanged.AddDynamic(this, &ABasicAI::OnHealthChanged);
 
 	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Component"));
@@ -64,8 +65,6 @@ void ABasicAI::BeginPlay()
 	{
 		FVector Nextpoint = GetNextPathPoint();
 	}
-	
-
 }
 
 FVector ABasicAI::GetNextPathPoint()

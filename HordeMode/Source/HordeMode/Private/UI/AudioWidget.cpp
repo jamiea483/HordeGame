@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AudioWidget.h"
-#include "HordeGameUserSettings.h"
+#include "UI/AudioWidget.h"
+#include "Settings/HordeGameUserSettings.h"
 #include "Components/Slider.h"
 
 void UAudioWidget::SetAudioForWidget()

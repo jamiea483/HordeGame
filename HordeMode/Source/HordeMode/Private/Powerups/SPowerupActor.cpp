@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SPowerupActor.h"
+#include "Powerups/SPowerupActor.h"
 #include "TimerManager.h"
 #include "UnrealNetwork.h"
 

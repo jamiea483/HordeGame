@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PauseMenuWidget.h"
-#include "SPlayerController.h"
-#include "HordeGameInstance.h"
-#include "MainMenuWidget.h"
+#include "UI/PauseMenuWidget.h"
+#include "Controller/SPlayerController.h"
+#include "Components/HordeGameInstance.h"
+#include "UI/MainMenuWidget.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -55,6 +55,8 @@ void UPauseMenuWidget::Controls()
 						{
 								GI->SetActiveWidget(EMenuState::MainMenu, 1);
 								UGameplayStatics::OpenLevel(GetWorld(), "MainMenu");
+								FInputModeGameOnly InputMode;
+								MyController->SetInputMode(InputMode);
 						}
 					}
 				}

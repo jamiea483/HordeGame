@@ -1,14 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "HordeModeGameMode.h"
+#include "GameMode/HordeModeGameMode.h"
 #include "TimerManager.h"
 #include "Engine/World.h"
-#include "SHealthComponent.h"
+#include "Components/SHealthComponent.h"
 #include "GameFramework/Pawn.h"
 #include "SGameState.h"
-#include "SPlayerState.h"
-#include "..\..\Public\GameMode\HordeModeGameMode.h"
+#include "States/SPlayerState.h"
+#include "GameMode\HordeModeGameMode.h"
 
 AHordeModeGameMode::AHordeModeGameMode()
 {

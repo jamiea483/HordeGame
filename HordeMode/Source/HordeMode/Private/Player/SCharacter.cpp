@@ -1,19 +1,19 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SCharacter.h"
+#include "Player/SCharacter.h"
 #include "Engine/World.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
-#include "PickUpComponent.h"
+#include "Components/PickUpComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "HordeMode.h"
-#include "SHealthComponent.h"
+#include "../../HordeMode.h"
+#include "Components/SHealthComponent.h"
 #include "UnrealNetwork.h"
 
 #include "GameFramework/SpringArmComponent.h"
-#include "SWeapon.h"
+#include "Weapon/SWeapon.h"
 #include "Camera/CameraComponent.h"
 
 

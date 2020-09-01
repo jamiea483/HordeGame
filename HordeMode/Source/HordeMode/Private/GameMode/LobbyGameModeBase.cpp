@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "LobbyGameModeBase.h"
-#include  "HordeGameInstance.h"
+#include "GameMode/LobbyGameModeBase.h"
+#include "Components/HordeGameInstance.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
-#include "HordeGameInstance.h"
+
 
 ALobbyGameModeBase::ALobbyGameModeBase()
 {

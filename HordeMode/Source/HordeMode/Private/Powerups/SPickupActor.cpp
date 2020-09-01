@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SPickupActor.h"
+#include "Powerups/SPickupActor.h"
 #include "Components/DecalComponent.h"
 #include "Components/SphereComponent.h"
-#include "SPowerupActor.h"
-#include "SCharacter.h"
+#include "Powerups/SPowerupActor.h"
+#include "Player/SCharacter.h"
 #include "TimerManager.h"
 
 // Sets default values

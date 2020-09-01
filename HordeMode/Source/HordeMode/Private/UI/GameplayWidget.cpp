@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GameplayWidget.h"
-#include "HordeGameUserSettings.h"
+#include "UI/GameplayWidget.h"
+#include "Settings/HordeGameUserSettings.h"
 #include "Components/Slider.h"
 
 void UGameplayWidget::SetHorizaontal(float value)

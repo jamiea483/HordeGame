@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PickUpComponent.h"
-#include "InteractBase.h"
-#include "SCharacter.h"
-#include "SWeapon.h"
+#include "Components/PickUpComponent.h"
+#include "Weapon/InteractBase.h"
+#include "Player/SCharacter.h"
+#include "Weapon/SWeapon.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SphereComponent.h"
 #include "UnrealNetwork.h"
@@ -12,7 +12,7 @@
 // Sets default values for this component's properties
 UPickUpComponent::UPickUpComponent()
 {
-	SetIsReplicated(true);
+	SetIsReplicatedByDefault(true);
 	// ...
 }
 

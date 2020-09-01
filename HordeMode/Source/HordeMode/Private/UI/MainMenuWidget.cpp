@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MainMenuWidget.h"
+#include "UI/MainMenuWidget.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Components/TextBlock.h"
-#include "ServerWidget.h"
-#include "GameplayWidget.h"
-#include "AudioWidget.h"
+#include "UI/ServerWidget.h"
+#include "UI/GameplayWidget.h"
+#include "UI/AudioWidget.h"
 #include "Components/EditableTextBox.h"
 #include "Components/PanelWidget.h"
 

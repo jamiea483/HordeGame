@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ExplosiveBarrel.h"
-#include "SHealthComponent.h"
+#include "Hazards/Objects/ExplosiveBarrel.h"
+#include "Components/SHealthComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
-#include "HordeMode.h"
+#include "../HordeMode.h"
 #include "PhysicsEngine/RadialForceComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "UnrealNetwork.h"

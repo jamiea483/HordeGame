@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SGrenades.h"
+#include "Weapon/SGrenades.h"
 
 // Sets default values
 ASGrenades::ASGrenades()

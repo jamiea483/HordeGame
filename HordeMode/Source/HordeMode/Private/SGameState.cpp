@@ -3,15 +3,15 @@
 
 #include "SGameState.h"
 #include "UnrealNetwork.h"
-#include "SPlayerState.h"
-#include "UserWidget.h"
+#include "States/SPlayerState.h"
+#include "Blueprint/UserWidget.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "GameFramework/PlayerState.h"
 
-#include "HordeGameInstance.h"
-#include "MainMenuWidget.h"
-#include "MenuController.h"
+#include "Components/HordeGameInstance.h"
+#include "UI/MainMenuWidget.h"
+#include "Controller/MenuController.h"
 #include "Kismet/GameplayStatics.h"
 
 

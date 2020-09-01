@@ -1,17 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PlayerSCharacter.h"
+#include "Player/PlayerSCharacter.h"
 #include "Components/InputComponent.h"
-#include "SHealthComponent.h"
-#include "PickUpComponent.h"
+#include "Components/SHealthComponent.h"
+#include "Components/PickUpComponent.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "HordeMode.h"
+#include "../HordeMode.h"
 
 #include "Camera/CameraComponent.h"
-#include "SPlayerController.h"
-#include "SWeapon.h"
-#include "HordeGameUserSettings.h"
+#include "Controller/SPlayerController.h"
+#include "Weapon/SWeapon.h"
+#include "Settings/HordeGameUserSettings.h"
 
 
 

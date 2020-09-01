@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SPlayerController.h"
-#include "PauseMenuWidget.h"
+#include "Controller/SPlayerController.h"
+#include "UI/PauseMenuWidget.h"
 #include "Kismet/GameplayStatics.h"
-#include "HordeGameInstance.h"
-#include "PlayerSCharacter.h"
+#include "Components/HordeGameInstance.h"
+#include "Player/PlayerSCharacter.h"
 
 void ASPlayerController::LoadPauseMenu()
 {

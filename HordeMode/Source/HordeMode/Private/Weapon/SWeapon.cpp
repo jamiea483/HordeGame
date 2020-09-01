@@ -5,13 +5,13 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
-#include "HordeMode.h"
+#include "../HordeMode.h"
 #include "TimerManager.h"
 #include "Sound/SoundCue.h"
-#include "HordeGameUserSettings.h"
+#include "Settings/HordeGameUserSettings.h"
 
-#include "PlayArea.h"
-#include "SCharacter.h"
+#include "Hazards/PlayArea.h"
+#include "Player/SCharacter.h"
 
 
 
