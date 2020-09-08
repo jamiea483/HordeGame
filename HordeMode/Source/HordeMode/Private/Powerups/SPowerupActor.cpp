@@ -3,7 +3,7 @@
 
 #include "Powerups/SPowerupActor.h"
 #include "TimerManager.h"
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ASPowerupActor::ASPowerupActor()

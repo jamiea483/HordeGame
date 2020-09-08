@@ -8,7 +8,7 @@
 #include "../HordeMode.h"
 #include "PhysicsEngine/RadialForceComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AExplosiveBarrel::AExplosiveBarrel()

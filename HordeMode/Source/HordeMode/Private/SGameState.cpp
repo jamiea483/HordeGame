@@ -2,7 +2,7 @@
 
 
 #include "SGameState.h"
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 #include "States/SPlayerState.h"
 #include "Blueprint/UserWidget.h"
 #include "Engine/World.h"

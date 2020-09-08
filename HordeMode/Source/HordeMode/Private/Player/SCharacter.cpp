@@ -10,7 +10,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "../../HordeMode.h"
 #include "Components/SHealthComponent.h"
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 
 #include "GameFramework/SpringArmComponent.h"
 #include "Weapon/SWeapon.h"
@@ -43,27 +43,36 @@ ASCharacter::ASCharacter()
 	ZoomInterpSpeed = 20.0f;
 
 	WeaponSocketName = "WeaponSocket";
+	HolsterSocketName = "BigWeaponHolster";
 
 	AimOffSetPitch = 0;
 
+	bUsingMainWeapon = true;
 	bIsDead = false;
 	bInPlayArea = true;
 }
 
 void ASCharacter::ChangeWeapon()
 {
+	
 	if (BackUpWeapon)
 	{
-		ASWeapon* TempWeapon = CurrentWeapon;
-		CurrentWeapon->SetOwner(this);
-		CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, HolsterSocketName);
-		BackUpWeapon->SetOwner(this);
-		BackUpWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocketName);
-		CurrentWeapon = BackUpWeapon;
-		BackUpWeapon = TempWeapon;
-		TempWeapon = nullptr;
-	}
+		UE_LOG(LogTemp, Warning, TEXT("ChangeWeapon Called."));
+		if (!bUsingMainWeapon)
+		{
+			CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, HolsterSocketName);
+			BackUpWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocketName);
+		}
+		else
+		{
+			CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocketName );
+			BackUpWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, HolsterSocketName);
+		}
 
+	
+		UE_LOG(LogTemp, Warning, TEXT(" Main weapon is %s."), *CurrentWeapon->InteractableName.ToString());
+	}
+	bSwitchWeaponDoOnce = false;
 }
 
 ASWeapon* ASCharacter::SpawnWeapon(TSubclassOf<ASWeapon> Weapon, FName SocketName)
@@ -148,7 +157,10 @@ void ASCharacter::StartFire()
 	if (CurrentWeapon && !bWeaponReload && !bSwitchingWeapon)
 	{
 		bIsFiring = true;
-		CurrentWeapon->StartFire();
+		if(bUsingMainWeapon)
+			CurrentWeapon->StartFire();
+		else
+			BackUpWeapon->StartFire();
 	}
 }
 
@@ -158,23 +170,21 @@ void ASCharacter::StopFire()
 	if (CurrentWeapon && !bWeaponReload)
 	{
 		bIsFiring = false;
-		CurrentWeapon->EndFire();
+		if(bUsingMainWeapon)
+			CurrentWeapon->EndFire();
+		else
+			BackUpWeapon->EndFire();
 	}
 }
 
-void ASCharacter::ReloadWeapon()
+void ASCharacter::Action()
 {	
 	if (bIsPaused)return;
 	if (!PickupComp->GetCanPickup())
 	{
-		if (CurrentWeapon->GetCurrentMag() != CurrentWeapon->GetMagSize())
-		{
-			if (GetLocalRole() < ROLE_Authority)
-			{
-				ServerReloadAnimation();
-			}
-			bWeaponReload = true;
-		}
+		StopFire();
+		ReloadWeapon();
+		
 	}
 	else
 	{
@@ -186,8 +196,38 @@ void ASCharacter::ReloadWeapon()
 	}
 }
 
+void ASCharacter::ReloadWeapon()
+{
+	if (bUsingMainWeapon)
+	{
+		if (CurrentWeapon->GetCurrentMag() != CurrentWeapon->GetMagSize() && !bWeaponReload)
+		{
+			if (GetLocalRole() < ROLE_Authority)
+			{
+				ServerReloadAnimation();
+			}			
+			bWeaponReload = true;
+		}
+	}
+	else
+	{
+		if (BackUpWeapon->GetCurrentMag() != BackUpWeapon->GetMagSize() && !bWeaponReload)
+		{
+			if (GetLocalRole() < ROLE_Authority)
+			{
+				ServerReloadAnimation();
+			}
+			bWeaponReload = true;
+		}
+	}
+}
+
 void ASCharacter::ServerReloadAnimation_Implementation()
 {
+	if (bUsingMainWeapon)
+		CurrentWeapon->EndFire();
+	else
+		BackUpWeapon->EndFire();
 	bWeaponReload = true;	
 }
 
@@ -198,14 +238,24 @@ bool ASCharacter::ServerReloadAnimation_Validate()
 
 void ASCharacter::SwitchWeapon()
 {
-	if (GetLocalRole() < ROLE_Authority)
-	{
-		ServerSwitchWeapon();
-	}
 	if (!bSwitchingWeapon && BackUpWeapon)
 	{
+		bSwitchWeaponDoOnce = true;
+		if (GetLocalRole() < ROLE_Authority)
+		{
+			ServerSwitchWeapon();
+		}
+
 		StopFire();
+		bWeaponReload = false;
+
+		if (bUsingMainWeapon)
+			bUsingMainWeapon = false;
+		else
+			bUsingMainWeapon = true;
 		bSwitchingWeapon = true;
+
+
 	}
 }
 
@@ -276,6 +326,8 @@ void ASCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLi
 	DOREPLIFETIME(ASCharacter, bWeaponReload);
 
 	DOREPLIFETIME(ASCharacter, bSwitchingWeapon);
+
+	DOREPLIFETIME(ASCharacter, bUsingMainWeapon);
 
 	DOREPLIFETIME(ASCharacter, bIsFiring);
 

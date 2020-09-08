@@ -4,7 +4,7 @@
 #include "Weapon/ProjectileSWeapon.h"
 #include "Engine/World.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 
 AProjectileSWeapon::AProjectileSWeapon()
 {

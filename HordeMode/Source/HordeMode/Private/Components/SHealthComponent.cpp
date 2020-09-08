@@ -4,7 +4,7 @@
 #include "Components/SHealthComponent.h"
 #include "GameFramework/Actor.h"
 #include "GameMode/HordeModeGameMode.h"
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 #include "Engine/World.h"
 
 

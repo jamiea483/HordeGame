@@ -98,6 +98,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void SetWeaponReloading(bool value) { bWeaponReload = value; };
 
+	void Action();
+
 	void ReloadWeapon();
 
 protected:
@@ -129,6 +131,9 @@ protected:
 		bool bSwitchingWeapon;
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Weapon")
+		bool bUsingMainWeapon;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Weapon")
 		bool bIsFiring;
 
 public:	
@@ -153,6 +158,9 @@ public:
 		bool GetWeaponSwitching() { return bSwitchingWeapon; };
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
+		bool GetUsingMainWeapon() { return bUsingMainWeapon; };
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
 		bool GetIsFiring() { return bIsFiring; };
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
@@ -172,5 +180,6 @@ public:
 			UFUNCTION(Server, Reliable, WithValidation)
 				void ServerInteract();
 
-			
+private:
+	bool bSwitchWeaponDoOnce;
 };

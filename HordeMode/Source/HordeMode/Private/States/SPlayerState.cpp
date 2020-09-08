@@ -2,7 +2,9 @@
 
 
 #include "States/SPlayerState.h"
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
+
+
 
 void ASPlayerState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {

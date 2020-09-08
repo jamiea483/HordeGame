@@ -4,7 +4,7 @@
 #include "Weapon/HitScanSWeapon.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 #include "../../HordeMode.h"
 
 #include "Particles/ParticleSystemComponent.h"

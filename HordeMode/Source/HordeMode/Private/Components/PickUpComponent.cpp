@@ -7,7 +7,7 @@
 #include "Weapon/SWeapon.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SphereComponent.h"
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values for this component's properties
 UPickUpComponent::UPickUpComponent()
