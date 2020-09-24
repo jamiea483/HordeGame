@@ -11,6 +11,5 @@ void ASPlayerState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & Out
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ASPlayerState, Kills);
-
 }
 

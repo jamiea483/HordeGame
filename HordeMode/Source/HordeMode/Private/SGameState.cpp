@@ -24,7 +24,6 @@ void ASGameState::SetWaveState(EWaveState NewState)
 
 		WaveState = NewState;
 		OnRep_WaveState(OldState);
-
 	}
 }
 

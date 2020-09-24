@@ -18,6 +18,9 @@ class HORDEMODE_API ALobbyGameModeBase : public AGameModeBase
 public:
 	ALobbyGameModeBase();
 
+	/**Called after a player Presses the ready button.*/
+	void CheckPlayersReadyState();
+
 	/** Called after a successful login.  This is the first place it is safe to call replicated functions on the PlayerController. */
 	void PostLogin(APlayerController* NewPlayer) override;
 
@@ -26,8 +29,12 @@ public:
 	/** Called when a Controller with a PlayerState leaves the game or is destroyed */
 	void Logout(AController* Exiting) override;
 
+	virtual void Tick(float DeltaTime) override;
+
 private:
 	uint32 NumPlayers = 0;
 
 	FTimerHandle StartGame_TimerHandle;
+
+	bool bDoOnce;
 };

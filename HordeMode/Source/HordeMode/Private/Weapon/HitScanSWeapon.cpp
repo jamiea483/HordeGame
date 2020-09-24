@@ -21,7 +21,6 @@ FAutoConsoleVariableRef WeaponDebug(TEXT("COOP.DebugWeapons"),
 AHitScanSWeapon::AHitScanSWeapon()
 {
 	TraceTargetName = "Target";
-
 }
 
 void AHitScanSWeapon::Fire()
@@ -33,8 +32,6 @@ void AHitScanSWeapon::Fire()
 	{
 
 		WeaponRecoil();
-		if (FireSound)
-			PlaySFX(FireSound);
 
 		FVector EyeLocation;
 		FRotator EyeRotation;
@@ -139,6 +136,8 @@ void AHitScanSWeapon::PlayFireEffect(const FVector &TraceEndPoint)
 	Super::PlayFireEffect();
 	if (SmokeBullutEffect)
 	{
+		if (FireSound)
+			PlaySFX(FireSound);
 		FVector MuzzleLocation = MeshComp->GetSocketLocation(MuzzleSocketName);
 		UParticleSystemComponent* SmokeComp = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SmokeBullutEffect, MuzzleLocation);
 
@@ -156,5 +155,4 @@ void AHitScanSWeapon::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME_CONDITION(AHitScanSWeapon, HitScanTrace, COND_SkipOwner);
-
 }

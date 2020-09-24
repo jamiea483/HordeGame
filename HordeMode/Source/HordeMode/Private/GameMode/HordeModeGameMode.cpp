@@ -121,7 +121,6 @@ void AHordeModeGameMode::CheckIfPlayerAlive()
 					return;
 				}
 		}
-
 	}
 	//if it gets here no player are alive.
 	GameOver();
@@ -141,7 +140,6 @@ void AHordeModeGameMode::SetWaveState(EWaveState NewState)
 	{
 		GS->SetWaveState(NewState);
 	}
-
 }
 
 void AHordeModeGameMode::RespawnDeadPlayers()
@@ -153,7 +151,6 @@ void AHordeModeGameMode::RespawnDeadPlayers()
 		{
 			RestartPlayer(PC);
 		}
-
 	}
 }
 

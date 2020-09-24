@@ -303,6 +303,8 @@ void ASCharacter::OnHealthChanged(USHealthComponent* HealthComponent, float Heal
 		GetMovementComponent()->StopMovementImmediately();
 		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		
+		//APlayerController* PC = Cast<APlayerController>(GetController());
+	
 		DetachFromControllerPendingDestroy();
 
 		CurrentWeapon->SetOwner(nullptr);
